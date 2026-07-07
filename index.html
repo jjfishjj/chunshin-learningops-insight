@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chun Shin LearningOps Insight</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div>
+        <p class="eyebrow">Chun Shin Co., Ltd. · Education Business Prototype</p>
+        <h1>LearningOps Insight</h1>
+        <p class="lede">
+          把校園與企業語言專案、TOEIC / TOEFL 學習旅程、課務執行與 BI 報表整合成一套可追蹤、可提案、可改善的數據系統。
+        </p>
+      </div>
+      <div class="header-panel" aria-label="Solution focus">
+        <span>Data Analyst</span>
+        <span>Language Consultant</span>
+        <span>Course Operations</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="section section-tight">
+        <div class="section-heading">
+          <p class="eyebrow">Pain Points</p>
+          <h2>忠欣的數據需求不只是報表，而是跨事業的決策支援</h2>
+        </div>
+        <div class="pain-grid">
+          <article>
+            <strong>校園與企業專案</strong>
+            <p>合作機會、提案內容、活動成效與續約機率分散在不同流程，顧問需要更快判斷下一步。</p>
+          </article>
+          <article>
+            <strong>學習與測驗旅程</strong>
+            <p>考生可能從 TOEIC Bridge、TOEIC L/R、S/W 到 TOEFL，但續報與學習行為需要被串成生命周期。</p>
+          </article>
+          <article>
+            <strong>課務與服務品質</strong>
+            <p>開課、出席、教材、講師、滿意度與進度追蹤需要成為可預警的營運儀表板。</p>
+          </article>
+          <article>
+            <strong>BI 與資料治理</strong>
+            <p>Power BI 報表要能跨系統取數，同時處理權限、資料完整性、去識別化與清理規則。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section brief-section" id="solutionBrief">
+        <div class="section-heading row-heading">
+          <div>
+            <p class="eyebrow">Solution Brief Demo</p>
+            <h2>把 data-solution-brief 變成可展示的提案介面</h2>
+          </div>
+          <div class="brief-tabs" role="tablist" aria-label="Solution brief sections">
+            <button class="brief-tab active" type="button" data-brief-tab="pain">痛點</button>
+            <button class="brief-tab" type="button" data-brief-tab="system">系統層</button>
+            <button class="brief-tab" type="button" data-brief-tab="roadmap">落地</button>
+          </div>
+        </div>
+        <div class="brief-shell">
+          <div class="brief-panel" id="briefPanel" aria-live="polite"></div>
+          <aside class="brief-aside">
+            <p class="eyebrow">Interview Line</p>
+            <blockquote>
+              我不會只從做報表開始，而會先定義顧問與業務團隊真正要回答的問題，再回推 SQL 資料模型與 Power BI 語意層。
+            </blockquote>
+            <div class="brief-stats">
+              <div>
+                <strong>5</strong>
+                <span>核心痛點</span>
+              </div>
+              <div>
+                <strong>4</strong>
+                <span>BI 主報表</span>
+              </div>
+              <div>
+                <strong>6週</strong>
+                <span>MVP pilot</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading row-heading">
+          <div>
+            <p class="eyebrow">Executive View</p>
+            <h2>六個指標先讓主管看到營運槓桿</h2>
+          </div>
+          <label class="selector-label">
+            Scenario
+            <select id="scenarioSelect">
+              <option value="campus">校園深耕</option>
+              <option value="enterprise">企業專案</option>
+              <option value="consumer">大眾考生</option>
+            </select>
+          </label>
+        </div>
+        <div class="kpi-grid" id="kpiGrid" aria-live="polite"></div>
+      </section>
+
+      <section class="section split">
+        <div>
+          <p class="eyebrow">System Blueprint</p>
+          <h2>從資料來源到顧問行動，形成閉環</h2>
+          <p>
+            這套原型的重點是把語言顧問工作具象化：每一個帳戶、班級、考生與課程活動都回到一個可分析的資料模型，讓提案不是靠經驗猜，而是靠分眾、漏斗、風險和成效追蹤。
+          </p>
+        </div>
+        <div class="flow" aria-label="Data flow">
+          <div>報名 / 測驗</div>
+          <div>TOEIC Pal / 學習行為</div>
+          <div>課務系統</div>
+          <div>CRM / 校園活動</div>
+          <div>BI 語意層</div>
+          <div>顧問行動建議</div>
+        </div>
+      </section>
+
+      <section class="section dashboard-section">
+        <div class="section-heading">
+          <p class="eyebrow">BI Dashboard Concept</p>
+          <h2>Power BI 可以先做三個主報表</h2>
+        </div>
+        <div class="dashboard-grid">
+          <article class="chart-card">
+            <div class="card-head">
+              <h3>學習旅程漏斗</h3>
+              <span>Bridge → L/R → S/W</span>
+            </div>
+            <div id="funnelChart" class="bar-chart"></div>
+          </article>
+          <article class="chart-card">
+            <div class="card-head">
+              <h3>課務健康度</h3>
+              <span>出席、進度、滿意度</span>
+            </div>
+            <div id="courseChart" class="line-chart"></div>
+          </article>
+          <article class="chart-card">
+            <div class="card-head">
+              <h3>顧問優先名單</h3>
+              <span>下一步拜訪 / 提案 / 激活</span>
+            </div>
+            <ul id="priorityList" class="priority-list"></ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section split reverse">
+        <div class="recommendation-panel">
+          <p class="eyebrow">Consultant Copilot</p>
+          <h2>輸入客戶類型，產生顧問提案方向</h2>
+          <label>
+            客戶類型
+            <select id="clientType">
+              <option value="university">大專院校</option>
+              <option value="enterprise">企業 HR / L&D</option>
+              <option value="highschool">高中職 / 技職體系</option>
+            </select>
+          </label>
+          <div id="recommendation" class="recommendation"></div>
+        </div>
+        <div>
+          <p class="eyebrow">Role Fit</p>
+          <h2>作品對準兩個職缺的共同需求</h2>
+          <div class="role-list">
+            <div>
+              <strong>學習規劃顧問</strong>
+              <p>用資料分眾、需求診斷和課程成效追蹤，提升校園開發、活動企劃與客戶續約品質。</p>
+            </div>
+            <div>
+              <strong>語言策略顧問 / BI</strong>
+              <p>用 SQL、資料清理、權限設計和 Power BI 語意層，支援業務團隊自動化報表與決策。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section campus-section" id="campusActivation">
+        <div class="section-heading">
+          <p class="eyebrow">Campus Activation</p>
+          <h2>結合我的專長，讓學生對多益與語言學習更有興趣</h2>
+          <p>
+            這一段把 AI 產品、校園平台、使用者行為分析、社群活動、記憶法內容和語言學習顧問能力接起來，讓忠欣看到我能把校園專案做成可參與、可追蹤、可轉化的活動系統。
+          </p>
+        </div>
+
+        <div class="campus-grid">
+          <div class="expertise-panel">
+            <h3>我的可用專長</h3>
+            <div class="expertise-list">
+              <article>
+                <strong>校園平台與社群機制</strong>
+                <p>做過校園社群、活動分組、課程評價與職涯入口，可理解學生如何被活動、同儕與職涯議題帶動。</p>
+              </article>
+              <article>
+                <strong>GA / 漏斗 / 留存分析</strong>
+                <p>能把講座報名、到場、測驗意願、App 啟用與正式報名做成事件追蹤與 dashboard。</p>
+              </article>
+              <article>
+                <strong>AI 工作坊與內容行銷</strong>
+                <p>能設計 AI 英文履歷、口說練習、短影音挑戰、社群貼文與講座企劃，讓語言學習不只像考試。</p>
+              </article>
+              <article>
+                <strong>MemoLingua 記憶法</strong>
+                <p>用場景記憶、聲音節奏、間隔複習與學習型態，把多益準備變成更容易開始的學習任務。</p>
+              </article>
+            </div>
+          </div>
+
+          <div class="campaign-panel">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Campaign Builder</p>
+                <h3>校園企劃 demo</h3>
+              </div>
+              <label class="selector-label">
+                活動類型
+                <select id="campaignType">
+                  <option value="toeic">多益興趣啟動</option>
+                  <option value="lecture">XX 語言講座</option>
+                  <option value="club">社團合作企劃</option>
+                  <option value="memory">記憶學習工作坊</option>
+                </select>
+              </label>
+            </div>
+            <div id="campaignDetail" class="campaign-detail" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Prototype with synthetic data. Built for interview discussion and GitHub Pages deployment.</p>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

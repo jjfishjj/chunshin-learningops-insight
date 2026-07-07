@@ -1,0 +1,31 @@
+{
+  "note": "Synthetic data for interview demonstration only.",
+  "scenarios": {
+    "campus": {
+      "lead_to_proposal_rate": 0.41,
+      "event_to_registration_rate": 0.27,
+      "course_completion_rate": 0.83,
+      "renewal_risk_accounts": 12
+    },
+    "enterprise": {
+      "completed_need_discovery": 36,
+      "proposal_cycle_days": 9.4,
+      "manager_dashboard_adoption": 0.76,
+      "training_satisfaction": 4.5
+    },
+    "consumer": {
+      "public_exam_registration_conversion": 0.18,
+      "app_activation_rate": 0.52,
+      "late_registration_share": 0.22,
+      "learning_material_cross_sell": 0.31
+    }
+  },
+  "journey_funnel": [
+    { "stage": "TOEIC Bridge", "conversion_index": 100 },
+    { "stage": "TOEIC Listening and Reading", "conversion_index": 68 },
+    { "stage": "TOEIC Speaking and Writing", "conversion_index": 31 },
+    { "stage": "TOEFL", "conversion_index": 18 }
+  ],
+  "course_health_index": [72, 76, 78, 81, 80, 84, 87, 86]
+}
+
