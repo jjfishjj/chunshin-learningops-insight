@@ -25,10 +25,19 @@ This is a portfolio-ready static prototype, not a production integration. It use
 - `index.html` - deployable dashboard/proposal prototype
 - `styles.css` - responsive visual system
 - `app.js` - mock analytics and interaction logic
+- `bi-dashboard.html` - standalone BI-style analytics dashboard with upload and report export
+- `bi-dashboard.css` - BI dashboard visual system
+- `bi-dashboard.js` - visualization, Excel/CSV parsing, KPI, table, and decision logic
 - `data/sample-metrics.json` - synthetic KPI data
+- `data/bi-sample-dataset.csv` - sample upload dataset for the BI dashboard
 - `docs/data-solution-brief.md` - proposal narrative and pain-point mapping
 - `docs/interview-script.md` - 60-second interview pitch and suggested questions
 - `sql/chunshin_learningops_model.sql` - BI-oriented schema, views, and data quality checks
+
+## Demo URLs
+
+- Main proposal: `https://jjfishjj.github.io/chunshin-learningops-insight/`
+- BI dashboard: `https://jjfishjj.github.io/chunshin-learningops-insight/bi-dashboard.html`
 
 ## GitHub Pages Deployment
 

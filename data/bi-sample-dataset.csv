@@ -1,0 +1,13 @@
+scenario,campaign,account,segment,learners,registrations,app_active_rate,attendance_rate,satisfaction,revenue,risk_score,score_lift
+campus,toeic,北部商管學院,大三 / 大四,420,92,0.56,0.82,4.4,276000,0.28,84
+campus,lecture,中央管理學院,商管菁英,360,75,0.49,0.78,4.3,225000,0.34,71
+campus,club,北商社團聯盟,社團幹部,280,58,0.61,0.74,4.2,174000,0.38,63
+campus,memory,技職英語專案,技職學生,310,64,0.44,0.80,4.5,192000,0.31,76
+enterprise,toeic,科技製造 HR,工程師,220,48,0.39,0.76,4.1,336000,0.42,58
+enterprise,lecture,金融 L&D,儲備幹部,180,46,0.53,0.84,4.6,368000,0.24,89
+enterprise,memory,跨國業務團隊,業務 / PM,150,38,0.58,0.81,4.5,304000,0.27,92
+enterprise,club,企業實習專案,實習生,130,26,0.35,0.69,3.9,156000,0.51,42
+consumer,toeic,公開場考生,求職者,520,108,0.52,0.71,4.0,324000,0.45,55
+consumer,lecture,App 新會員,口說提升,410,86,0.63,0.73,4.2,258000,0.36,67
+consumer,memory,記憶學習挑戰,自學者,340,72,0.66,0.77,4.5,216000,0.29,80
+consumer,club,校園口碑轉介,同儕推薦,260,55,0.57,0.70,4.1,165000,0.43,49

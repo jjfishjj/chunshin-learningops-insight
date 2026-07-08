@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chun Shin BI Dashboard Demo</title>
+    <link rel="stylesheet" href="./bi-dashboard.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  </head>
+  <body>
+    <header class="bi-header">
+      <div>
+        <p class="eyebrow">Chun Shin LearningOps BI</p>
+        <h1>數據儀表板展示台</h1>
+        <p class="lede">
+          用模擬資料展示校園、企業與大眾考生場景，並支援 Excel / CSV 上傳後輸出圖表、分析摘要與決策建議。
+        </p>
+      </div>
+      <div class="header-actions">
+        <a href="./index.html">回到原始提案</a>
+        <button id="printReport" type="button">列印 / PDF</button>
+        <button id="downloadReport" type="button">下載 HTML 報表</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="control-band" aria-label="Dashboard controls">
+        <label>
+          數據情境
+          <select id="scenarioFilter">
+            <option value="all">全部情境</option>
+            <option value="campus">校園深耕</option>
+            <option value="enterprise">企業專案</option>
+            <option value="consumer">大眾考生</option>
+          </select>
+        </label>
+        <label>
+          活動企劃
+          <select id="campaignFilter">
+            <option value="all">全部活動</option>
+            <option value="toeic">多益興趣啟動</option>
+            <option value="lecture">XX 語言講座</option>
+            <option value="club">社團合作企劃</option>
+            <option value="memory">記憶學習工作坊</option>
+          </select>
+        </label>
+        <label>
+          視覺化
+          <select id="chartType">
+            <option value="bar">橫條圖</option>
+            <option value="line">趨勢折線</option>
+            <option value="donut">占比甜甜圈</option>
+            <option value="heatmap">風險熱圖</option>
+          </select>
+        </label>
+        <label class="upload-control">
+          上傳 Excel / CSV
+          <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" />
+        </label>
+      </section>
+
+      <section class="status-strip" id="dataStatus">
+        <span>資料來源：內建模擬資料</span>
+        <span>資料不會離開瀏覽器</span>
+      </section>
+
+      <section class="kpi-grid" id="kpiGrid" aria-live="polite"></section>
+
+      <section class="dashboard-layout">
+        <article class="panel chart-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Visualization</p>
+              <h2 id="chartTitle">校園與語言專案成效</h2>
+            </div>
+            <button id="exportCsv" type="button">匯出摘要 CSV</button>
+          </div>
+          <div class="chart-stage" id="chartStage"></div>
+        </article>
+
+        <aside class="panel decision-panel">
+          <p class="eyebrow">Decision Output</p>
+          <h2>分析摘要與決策</h2>
+          <div id="decisionOutput" class="decision-output"></div>
+        </aside>
+      </section>
+
+      <section class="dashboard-layout secondary">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Data Preview</p>
+              <h2>模擬看到的數據</h2>
+            </div>
+            <span id="rowCount" class="row-count"></span>
+          </div>
+          <div class="table-wrap">
+            <table id="dataTable"></table>
+          </div>
+        </article>
+
+        <article class="panel">
+          <p class="eyebrow">Excel Upload Schema</p>
+          <h2>建議欄位</h2>
+          <div class="schema-grid">
+            <span>scenario</span>
+            <span>campaign</span>
+            <span>account</span>
+            <span>segment</span>
+            <span>learners</span>
+            <span>registrations</span>
+            <span>app_active_rate</span>
+            <span>attendance_rate</span>
+            <span>satisfaction</span>
+            <span>revenue</span>
+            <span>risk_score</span>
+            <span>score_lift</span>
+          </div>
+          <p class="schema-note">
+            上傳資料若欄位名稱不同，頁面仍會嘗試抓取數字欄位生成圖表；使用以上欄位時會產生最完整的決策建議。
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <script src="./bi-dashboard.js"></script>
+  </body>
+</html>
+
