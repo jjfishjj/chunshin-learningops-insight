@@ -155,6 +155,110 @@ const goalModifiers = {
   },
 };
 
+const difficultyModifiers = {
+  engagement: {
+    label: "學生參與度不足",
+    bottlenecks: { awareness: 0.1, motivation: 0.9, execution: 0.1, conversion: 0.2, retention: 0.2 },
+    rates: { arrival: 0.97, survey: 0.98, intent: 0.93, followup: 0.96, returnRate: 0.96 },
+  },
+  registration: {
+    label: "報名轉換率低",
+    bottlenecks: { awareness: 0.3, motivation: 0.3, execution: 0.1, conversion: 0.9, retention: 0.1 },
+    rates: { arrival: 0.98, survey: 1, intent: 0.94, followup: 0.95, returnRate: 0.96 },
+  },
+  reach: {
+    label: "訊息觸及不足",
+    bottlenecks: { awareness: 0.9, motivation: 0.1, execution: 0.2, conversion: 0.2, retention: 0 },
+    signups: 0.9,
+    rates: { arrival: 0.98, survey: 1, intent: 0.98, followup: 0.97, returnRate: 0.98 },
+  },
+  measurement: {
+    label: "活動成效不明",
+    bottlenecks: { awareness: 0, motivation: 0.2, execution: 0.8, conversion: 0.5, retention: 0.4 },
+    rates: { arrival: 1, survey: 0.94, intent: 0.97, followup: 0.92, returnRate: 0.94 },
+  },
+  resource: {
+    label: "資源 / 預算有限",
+    bottlenecks: { awareness: 0.1, motivation: 0, execution: 0.9, conversion: 0.3, retention: 0.3 },
+    signups: 0.92,
+    rates: { arrival: 1.03, survey: 1.02, intent: 1.01, followup: 0.97, returnRate: 0.98 },
+  },
+  other: {
+    label: "其他",
+    bottlenecks: { awareness: 0.2, motivation: 0.2, execution: 0.2, conversion: 0.2, retention: 0.2 },
+    rates: { arrival: 1, survey: 1, intent: 1, followup: 1, returnRate: 1 },
+  },
+};
+
+const pushMethodModifiers = {
+  lecture: {
+    label: "講座 / 說明會",
+    signups: 1.08,
+    rates: { arrival: 1.02, survey: 1.01, intent: 1.03, followup: 1, returnRate: 0.98 },
+    boost: { "AI 英文履歷工作坊": 2, "多益落點診斷問卷": 1 },
+  },
+  class: {
+    label: "班級推薦",
+    signups: 1.04,
+    rates: { arrival: 1.06, survey: 1.02, intent: 1.01, followup: 1.02, returnRate: 1 },
+    boost: { "記憶法多益單字挑戰": 1, "多益落點診斷問卷": 1 },
+  },
+  contest: {
+    label: "競賽 / 挑戰賽",
+    signups: 1.06,
+    rates: { arrival: 0.98, survey: 1, intent: 1.05, followup: 0.98, returnRate: 1.03 },
+    boost: { "記憶法多益單字挑戰": 3 },
+  },
+  online: {
+    label: "線上活動",
+    signups: 1.14,
+    rates: { arrival: 0.93, survey: 1.06, intent: 1.01, followup: 1.04, returnRate: 1.07 },
+    boost: { "多益落點診斷問卷": 2 },
+  },
+  club: {
+    label: "社團聯合",
+    signups: 1.08,
+    rates: { arrival: 1.03, survey: 1.01, intent: 1.02, followup: 1.03, returnRate: 1.04 },
+    boost: { "記憶法多益單字挑戰": 2, "AI 英文履歷工作坊": 1 },
+  },
+  other: {
+    label: "其他",
+    signups: 1,
+    rates: { arrival: 1, survey: 1, intent: 1, followup: 1, returnRate: 1 },
+    boost: {},
+  },
+};
+
+const methodProfiles = {
+  "記憶法多益單字挑戰": {
+    icon: "ABC",
+    fit: { awareness: 2, motivation: 4, execution: 2, conversion: 1, retention: 2 },
+    reason: "單字是入門門檻，遊戲化挑戰可快速吸引學生參與，降低初始學習阻力。",
+    observation: "參與率、每日活躍率、單字測驗完成率與分享率。",
+    audience: "大一新生、對英文學習缺乏信心、喜歡輕量與遊戲化活動的學生。",
+    materials: "單字題庫、挑戰規則、報名後獎勵機制與社團協作素材。",
+    scores: [5, 3, 3, 4],
+  },
+  "AI 英文履歷工作坊": {
+    icon: "CV",
+    fit: { awareness: 2, motivation: 3, execution: 3, conversion: 4, retention: 3 },
+    reason: "結合職涯需求，讓學生看見英文學習與未來工作之間的直接關聯。",
+    observation: "報名率、出席率、履歷產出率、後續諮詢或課程轉換率。",
+    audience: "大二到大四、關注實習與求職、需要履歷優化的學生。",
+    materials: "履歷範本、AI 履歷診斷工具、教學簡報與案例分享。",
+    scores: [4, 3, 4, 4],
+  },
+  "多益落點診斷問卷": {
+    icon: "Q",
+    fit: { awareness: 3, motivation: 2, execution: 4, conversion: 5, retention: 4 },
+    reason: "透過短問卷讓學生了解自己的程度落點，建立學習動機並引導後續課程推薦。",
+    observation: "問卷完成率、診斷報告開啟率、課程推薦點擊率與預約率。",
+    audience: "所有年級、尚未考過多益或想了解自身程度的學生。",
+    materials: "診斷問卷、結果頁面、課程推薦內容與顧問追蹤腳本。",
+    scores: [3, 4, 5, 5],
+  },
+};
+
 const chartSets = {
   activity: {
     topicTitle: "不同主題報名人數",
@@ -235,6 +339,17 @@ const viewSelect = document.querySelector("#viewSelect");
 const copyReport = document.querySelector("#copyReport");
 const downloadSummary = document.querySelector("#downloadSummary");
 const startSimulation = document.querySelector("#startSimulation");
+const campusTargetSelect = document.querySelector("#campusTargetSelect");
+const campusGoalSelect = document.querySelector("#campusGoalSelect");
+const campusInputSummary = document.querySelector("#campusInputSummary");
+const campusReminder = document.querySelector("#campusReminder");
+const saveCampusDraft = document.querySelector("#saveCampusDraft");
+const runCampusAnalysis = document.querySelector("#runCampusAnalysis");
+const methodRecommendationLead = document.querySelector("#methodRecommendationLead");
+const methodCards = document.querySelector("#methodCards");
+const priorityOrder = document.querySelector("#priorityOrder");
+const methodMatrix = document.querySelector("#methodMatrix");
+const goDashboard = document.querySelector("#goDashboard");
 
 let activeScenario = "campus";
 
@@ -250,12 +365,52 @@ function rate(value) {
   return clamp(value, 0.05, 0.96);
 }
 
+function checkedValues(name) {
+  return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map((input) => input.value);
+}
+
+function selectedRadioValue(name) {
+  return document.querySelector(`input[name="${name}"]:checked`)?.value;
+}
+
+function combinedModifier(values, source) {
+  return values.reduce(
+    (combined, value) => {
+      const modifier = source[value];
+      if (!modifier) return combined;
+      combined.signups *= modifier.signups || 1;
+      Object.entries(modifier.rates || {}).forEach(([key, factor]) => {
+        combined.rates[key] = (combined.rates[key] || 1) * factor;
+      });
+      Object.entries(modifier.bottlenecks || {}).forEach(([key, delta]) => {
+        combined.bottlenecks[key] = (combined.bottlenecks[key] || 0) + delta;
+      });
+      return combined;
+    },
+    {
+      signups: 1,
+      rates: { arrival: 1, survey: 1, intent: 1, followup: 1, returnRate: 1 },
+      bottlenecks: { awareness: 0, motivation: 0, execution: 0, conversion: 0, retention: 0 },
+    },
+  );
+}
+
+function selectedDifficultyModifier() {
+  return combinedModifier(checkedValues("difficulty"), difficultyModifiers);
+}
+
+function selectedPushModifier() {
+  return combinedModifier(checkedValues("pushMethod"), pushMethodModifiers);
+}
+
 function currentModifiers() {
   return [
     targetModifiers[targetSelect.value],
     scaleModifiers[scaleSelect.value],
     listModifiers[listSelect.value],
     goalModifiers[goalSelect.value],
+    selectedDifficultyModifier(),
+    selectedPushModifier(),
   ];
 }
 
@@ -293,6 +448,35 @@ function suggestedAvoidText(key) {
   return avoidMap[key];
 }
 
+function recommendedMethodRows() {
+  const strongest = strongestBottleneck();
+  const selectedMethods = checkedValues("pushMethod");
+  const pushBoost = selectedMethods.reduce((boosts, value) => {
+    Object.entries(pushMethodModifiers[value]?.boost || {}).forEach(([method, boost]) => {
+      boosts[method] = (boosts[method] || 0) + boost;
+    });
+    return boosts;
+  }, {});
+  const goalBoost = {
+    message: { "多益落點診斷問卷": 1, "記憶法多益單字挑戰": 1 },
+    activity: { "記憶法多益單字挑戰": 2, "AI 英文履歷工作坊": 1 },
+    conversion: { "多益落點診斷問卷": 2, "AI 英文履歷工作坊": 2 },
+    followup: { "多益落點診斷問卷": 2, "AI 英文履歷工作坊": 1 },
+  }[goalSelect.value];
+  return Object.entries(methodProfiles)
+    .map(([name, profile]) => ({
+      name,
+      ...profile,
+      rankScore: (profile.fit[strongest.key] || 0) + (pushBoost[name] || 0) + (goalBoost[name] || 0),
+    }))
+    .sort((a, b) => b.rankScore - a.rankScore)
+    .slice(0, 3);
+}
+
+function stars(score) {
+  return `${"★".repeat(score)}${"☆".repeat(5 - score)}`;
+}
+
 function renderScenarioCards() {
   scenarioCards.innerHTML = Object.entries(scenarioData)
     .map(
@@ -308,7 +492,7 @@ function renderScenarioCards() {
     card.addEventListener("click", () => {
       activeScenario = card.dataset.scenario;
       renderAll();
-      document.querySelector("#diagnosis").scrollIntoView({ behavior: "smooth" });
+      document.querySelector("#campus-settings").scrollIntoView({ behavior: "smooth" });
     });
   });
 }
@@ -325,6 +509,42 @@ function renderSetup() {
     <div><dt>活動規模</dt><dd>${scaleText}</dd></div>
     <div><dt>名單基礎</dt><dd>${listText}</dd></div>
     <div><dt>最想驗證</dt><dd>${goalText}</dd></div>
+  `;
+}
+
+function syncCampusControls() {
+  if (campusTargetSelect.value !== targetSelect.value) campusTargetSelect.value = targetSelect.value;
+  if (campusGoalSelect.value !== goalSelect.value) campusGoalSelect.value = goalSelect.value;
+  const scaleRadio = document.querySelector(`input[name="campusScale"][value="${scaleSelect.value}"]`);
+  if (scaleRadio && !scaleRadio.checked) scaleRadio.checked = true;
+  const listRadio = document.querySelector(`input[name="campusList"][value="${listSelect.value}"]`);
+  if (listRadio && !listRadio.checked) listRadio.checked = true;
+}
+
+function renderCampusSettings() {
+  syncCampusControls();
+  const targetText = campusTargetSelect.options[campusTargetSelect.selectedIndex].text;
+  const goalText = campusGoalSelect.options[campusGoalSelect.selectedIndex].text;
+  const listText = document.querySelector(`input[name="campusList"][value="${listSelect.value}"]`)?.parentElement.textContent.trim() || "";
+  const scaleText = document.querySelector(`input[name="campusScale"][value="${scaleSelect.value}"]`)?.parentElement.textContent.trim() || "";
+  const difficulties = checkedValues("difficulty").map((value) => difficultyModifiers[value].label);
+  const methods = checkedValues("pushMethod").map((value) => pushMethodModifiers[value].label);
+  const strongest = strongestBottleneck();
+  campusInputSummary.innerHTML = `
+    <div><dt>推廣對象</dt><dd>${targetText}</dd></div>
+    <div><dt>主要困難</dt><dd>${difficulties.join("、") || "尚未選擇"}</dd></div>
+    <div><dt>推動形式</dt><dd>${methods.join("、") || "尚未選擇"}</dd></div>
+    <div><dt>名單基礎</dt><dd>${listText}</dd></div>
+    <div><dt>最想驗證</dt><dd>${goalText}</dd></div>
+    <div><dt>活動規模</dt><dd>${scaleText}</dd></div>
+  `;
+  campusReminder.innerHTML = `
+    <strong>系統提醒</strong>
+    <ul>
+      <li>目前最強卡點為「${strongest.label}」，下方卡點結構已同步更新。</li>
+      <li>${targetModifiers[targetSelect.value].note}</li>
+      <li>建議先選 1-2 個推動形式做小規模測試，再擴大到全校或跨系活動。</li>
+    </ul>
   `;
 }
 
@@ -357,8 +577,80 @@ function renderDiagnosis() {
     <p>參數影響：${targetModifiers[targetSelect.value].note}</p>
     <p>不建議先做：${suggestedAvoidText(strongest.key) || scenario.avoid}</p>
   `;
-  const methods = [goalModifiers[goalSelect.value].method, ...scenario.methods].filter((method, index, arr) => arr.indexOf(method) === index);
+  const methods = [goalModifiers[goalSelect.value].method, ...recommendedMethodRows().map((method) => method.name), ...scenario.methods].filter(
+    (method, index, arr) => arr.indexOf(method) === index,
+  );
   methodList.innerHTML = methods.slice(0, 4).map((method) => `<li>${method}</li>`).join("");
+}
+
+function renderRecommendationMethods() {
+  const rows = recommendedMethodRows();
+  const strongest = strongestBottleneck();
+  methodRecommendationLead.textContent = `以下方法依據目前「${scenarioData[activeScenario].label}」情境與「${strongest.label}」卡點排序，建議優先測試並用數據驗證成效。`;
+  methodCards.innerHTML = rows
+    .map(
+      (method, index) => `
+        <article class="method-card ${index === 0 ? "recommended" : ""}">
+          <div class="method-icon">${method.icon}</div>
+          <h3>${method.name}</h3>
+          <div class="method-meta">
+            <div>
+              <strong>適用原因</strong>
+              <p>${method.reason}</p>
+            </div>
+            <div>
+              <strong>預期觀察</strong>
+              <p>${method.observation}</p>
+            </div>
+            <div>
+              <strong>適合族群</strong>
+              <p>${method.audience}</p>
+            </div>
+            <div>
+              <strong>需要準備的素材</strong>
+              <p>${method.materials}</p>
+            </div>
+          </div>
+        </article>
+      `,
+    )
+    .join("");
+  priorityOrder.innerHTML = rows
+    .map(
+      (method, index) => `
+        <li>
+          <span>${index + 1}</span>
+          <div>
+            <strong>${method.name}</strong>
+            <small>${method.reason}</small>
+          </div>
+        </li>
+      `,
+    )
+    .join("");
+  methodMatrix.innerHTML = `
+    <thead>
+      <tr>
+        <th>評估面向</th>
+        <th>吸引力（對學生）</th>
+        <th>執行難度（對校方）</th>
+        <th>後續轉換（課程 / 活動）</th>
+        <th>資料可追蹤性</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${rows
+        .map(
+          (method) => `
+            <tr>
+              <td><strong>${method.name}</strong></td>
+              ${method.scores.map((score) => `<td><span class="score-stars">${stars(score)}</span></td>`).join("")}
+            </tr>
+          `,
+        )
+        .join("")}
+    </tbody>
+  `;
 }
 
 function adjustedKpis() {
@@ -625,10 +917,11 @@ function renderReport() {
   const scenario = scenarioData[activeScenario];
   const kpi = adjustedKpis();
   const strongest = strongestBottleneck();
+  const recommendations = recommendedMethodRows().map((method) => method.name);
   const blocks = [
     ["一、情境摘要", `目前模擬情境為「${scenario.label}」，推廣對象為 ${targetSelect.options[targetSelect.selectedIndex].text}。`],
     ["二、主要卡點判斷", `依目前參數重算後，主要卡點是「${strongest.label}」，次要卡點是「${strongest.second}」。`],
-    ["三、建議測試方法", `建議先測：${[goalModifiers[goalSelect.value].method, ...scenario.methods].slice(0, 3).join("、")}。`],
+    ["三、建議測試方法", `建議先測：${recommendations.join("、")}。`],
     ["四、追蹤指標", `報名 ${kpi.signups}、到場率 ${pct(kpi.arrival)}、問卷完成率 ${pct(kpi.survey)}、測驗意願率 ${pct(kpi.intent)}、顧問跟進 ${kpi.followups} 人。`],
     ["五、下一步建議", "先做小範圍驗證，再依資料判讀決定是否擴大，不以短期營收承諾作為提案主軸。"],
   ];
@@ -638,6 +931,7 @@ function renderReport() {
 function renderExecutionSummary() {
   const scenario = scenarioData[activeScenario];
   const strongest = strongestBottleneck();
+  const firstMethod = recommendedMethodRows()[0]?.name || scenario.methods[0];
   howList.innerHTML = [
     "先選一個明確情境與目標族群。",
     `用問卷或小型活動驗證「${strongest.label}」是否真的是主要卡點。`,
@@ -647,7 +941,7 @@ function renderExecutionSummary() {
     .map((item) => `<li>${item}</li>`)
     .join("");
   planList.innerHTML = [
-    `設計「${scenario.methods[0]}」作為第一個驗證活動。`,
+    `設計「${firstMethod}」作為第一個驗證活動。`,
     "建立報名、到場、問卷、意願、跟進、回流欄位。",
     "產出活動後 14 天追蹤報表。",
     "整理顧問話術、名單狀態與下一步建議。",
@@ -666,12 +960,13 @@ function reportText() {
   const scenario = scenarioData[activeScenario];
   const kpi = adjustedKpis();
   const strongest = strongestBottleneck();
+  const recommendations = recommendedMethodRows().map((method) => method.name);
   return [
     "多益推進方法學模擬摘要",
     `情境：${scenario.label}`,
     `主要卡點：${strongest.label}`,
     `圖表視角：${viewSelect.options[viewSelect.selectedIndex].text}`,
-    `建議方法：${[goalModifiers[goalSelect.value].method, ...scenario.methods].slice(0, 3).join("、")}`,
+    `建議方法：${recommendations.join("、")}`,
     `模擬 KPI：報名 ${kpi.signups}、到場率 ${pct(kpi.arrival)}、問卷完成率 ${pct(kpi.survey)}、測驗意願率 ${pct(kpi.intent)}、顧問跟進 ${kpi.followups} 人`,
     "下一步：先做小範圍方法學驗證，再依資料結果決定是否擴大。",
   ].join("\n");
@@ -690,7 +985,9 @@ function download(filename, text) {
 function renderAll() {
   renderScenarioCards();
   renderSetup();
+  renderCampusSettings();
   renderDiagnosis();
+  renderRecommendationMethods();
   renderKpis();
   renderChartTitles();
   renderFunnel();
@@ -703,8 +1000,44 @@ function renderAll() {
   renderExecutionSummary();
 }
 
+function handleCoreControlChange() {
+  if (targetSelect.value === "enterprise") activeScenario = "enterprise";
+  if (targetSelect.value !== "enterprise" && activeScenario === "enterprise") activeScenario = "campus";
+  renderAll();
+}
+
 [targetSelect, scaleSelect, listSelect, goalSelect, viewSelect].forEach((control) => {
-  control.addEventListener("change", renderAll);
+  control.addEventListener("change", handleCoreControlChange);
+});
+
+campusTargetSelect.addEventListener("change", () => {
+  targetSelect.value = campusTargetSelect.value;
+  if (campusTargetSelect.value === "enterprise") activeScenario = "enterprise";
+  if (campusTargetSelect.value !== "enterprise") activeScenario = "campus";
+  renderAll();
+});
+
+campusGoalSelect.addEventListener("change", () => {
+  goalSelect.value = campusGoalSelect.value;
+  renderAll();
+});
+
+document.querySelectorAll('input[name="campusScale"]').forEach((input) => {
+  input.addEventListener("change", () => {
+    scaleSelect.value = selectedRadioValue("campusScale");
+    renderAll();
+  });
+});
+
+document.querySelectorAll('input[name="campusList"]').forEach((input) => {
+  input.addEventListener("change", () => {
+    listSelect.value = selectedRadioValue("campusList");
+    renderAll();
+  });
+});
+
+document.querySelectorAll('input[name="difficulty"], input[name="pushMethod"]').forEach((input) => {
+  input.addEventListener("change", renderAll);
 });
 
 document.querySelectorAll(".nav-link").forEach((link) => {
@@ -729,5 +1062,13 @@ copyReport.addEventListener("click", async () => {
 
 downloadSummary.addEventListener("click", () => download("toeic-method-simulator-summary.txt", reportText()));
 startSimulation.addEventListener("click", () => document.querySelector("#scenario").scrollIntoView({ behavior: "smooth" }));
+saveCampusDraft.addEventListener("click", () => {
+  saveCampusDraft.textContent = "已儲存";
+  setTimeout(() => {
+    saveCampusDraft.textContent = "儲存草稿";
+  }, 1200);
+});
+runCampusAnalysis.addEventListener("click", () => document.querySelector("#diagnosis").scrollIntoView({ behavior: "smooth" }));
+goDashboard.addEventListener("click", () => document.querySelector("#dashboard").scrollIntoView({ behavior: "smooth" }));
 
 renderAll();

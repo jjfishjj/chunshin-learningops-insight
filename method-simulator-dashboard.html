@@ -16,6 +16,8 @@
         <nav aria-label="Dashboard navigation">
           <a class="nav-link active" href="#overview" data-section="overview">首頁總覽</a>
           <a class="nav-link" href="#scenario" data-section="scenario">情境模擬</a>
+          <a class="nav-link" href="#campus-settings" data-section="campus-settings">校園設定</a>
+          <a class="nav-link" href="#recommendation-methods" data-section="recommendation-methods">推薦方法</a>
           <a class="nav-link" href="#diagnosis" data-section="diagnosis">卡點判斷</a>
           <a class="nav-link" href="#dashboard" data-section="dashboard">活動成效</a>
           <a class="nav-link" href="#consultant" data-section="consultant">顧問推進</a>
@@ -117,6 +119,127 @@
               <div class="system-notes">
                 <strong>系統提醒</strong>
                 <p>建議先聚焦一個目標族群與 1-2 個驗證題目，避免一次測太多變因。</p>
+              </div>
+            </aside>
+          </section>
+
+          <section class="section-grid campus-settings-grid" id="campus-settings">
+            <article class="panel input-panel">
+              <p class="eyebrow">Campus Promotion Setup</p>
+              <h2>校園推廣情境設定</h2>
+              <p>先輸入校園端的基本狀況，系統會同步重算卡點、推薦方法與後續 dashboard 模擬資料。</p>
+              <div class="mini-stepper" aria-label="Campus promotion flow">
+                <div class="mini-step done"><span>1</span>選擇情境</div>
+                <div class="mini-step active"><span>2</span>輸入問題</div>
+                <div class="mini-step"><span>3</span>卡點判斷</div>
+                <div class="mini-step"><span>4</span>推薦方法</div>
+                <div class="mini-step"><span>5</span>報告輸出</div>
+              </div>
+
+              <div class="campus-form">
+                <label class="field-row">
+                  目前推廣對象是？
+                  <select id="campusTargetSelect">
+                    <option value="university">大學生（四技 / 大學）</option>
+                    <option value="freshman">大一到大二</option>
+                    <option value="senior">大三到大四</option>
+                    <option value="enterprise">企業員工</option>
+                  </select>
+                </label>
+
+                <fieldset>
+                  <legend>目前主要困難是？</legend>
+                  <div class="check-grid">
+                    <label><input type="checkbox" name="difficulty" value="engagement" checked />學生參與度不足</label>
+                    <label><input type="checkbox" name="difficulty" value="registration" checked />報名轉換率低</label>
+                    <label><input type="checkbox" name="difficulty" value="reach" />訊息觸及不足</label>
+                    <label><input type="checkbox" name="difficulty" value="measurement" />活動成效不明</label>
+                    <label><input type="checkbox" name="difficulty" value="resource" />資源 / 預算有限</label>
+                    <label><input type="checkbox" name="difficulty" value="other" />其他</label>
+                  </div>
+                </fieldset>
+
+                <fieldset>
+                  <legend>希望推動形式是？</legend>
+                  <div class="check-grid">
+                    <label><input type="checkbox" name="pushMethod" value="lecture" checked />講座 / 說明會</label>
+                    <label><input type="checkbox" name="pushMethod" value="class" checked />班級推薦</label>
+                    <label><input type="checkbox" name="pushMethod" value="contest" />競賽 / 挑戰賽</label>
+                    <label><input type="checkbox" name="pushMethod" value="online" />線上活動</label>
+                    <label><input type="checkbox" name="pushMethod" value="club" checked />社團聯合</label>
+                    <label><input type="checkbox" name="pushMethod" value="other" />其他</label>
+                  </div>
+                </fieldset>
+
+                <fieldset>
+                  <legend>目前有沒有名單基礎？</legend>
+                  <div class="radio-line">
+                    <label><input type="radio" name="campusList" value="ready" />已有完整名單</label>
+                    <label><input type="radio" name="campusList" value="partial" checked />有部分名單</label>
+                    <label><input type="radio" name="campusList" value="none" />幾乎沒有名單</label>
+                  </div>
+                </fieldset>
+
+                <label class="field-row">
+                  目前最想驗證什麼？
+                  <select id="campusGoalSelect">
+                    <option value="message">推廣訊息是否能吸引學生參與</option>
+                    <option value="activity">哪種活動最能促進參與</option>
+                    <option value="conversion">如何從活動轉成測驗意願</option>
+                    <option value="followup">顧問後續怎麼追蹤</option>
+                  </select>
+                </label>
+
+                <fieldset>
+                  <legend>預計活動規模？</legend>
+                  <div class="radio-line">
+                    <label><input type="radio" name="campusScale" value="small" />小型（&lt;50 人）</label>
+                    <label><input type="radio" name="campusScale" value="medium" checked />中型（50-200 人）</label>
+                    <label><input type="radio" name="campusScale" value="large" />大型（&gt;200 人）</label>
+                  </div>
+                </fieldset>
+              </div>
+            </article>
+
+            <aside class="panel summary-panel">
+              <p class="eyebrow">Input Summary</p>
+              <h2>目前輸入摘要</h2>
+              <dl id="campusInputSummary"></dl>
+              <div class="system-reminder" id="campusReminder"></div>
+              <div class="campus-actions">
+                <button id="saveCampusDraft" type="button">儲存草稿</button>
+                <button id="runCampusAnalysis" type="button">開始分析</button>
+              </div>
+            </aside>
+          </section>
+
+          <section class="section-grid recommendation-grid" id="recommendation-methods">
+            <article class="panel input-panel">
+              <p class="eyebrow">Recommended Methods</p>
+              <div class="mini-stepper compact" aria-label="Recommendation flow">
+                <div class="mini-step done"><span>1</span>選擇情境</div>
+                <div class="mini-step done"><span>2</span>輸入問題</div>
+                <div class="mini-step done"><span>3</span>判斷卡點</div>
+                <div class="mini-step active"><span>4</span>推薦方法</div>
+                <div class="mini-step"><span>5</span>輸出報告</div>
+              </div>
+              <h2>根據卡點判斷，建議先測試以下 3 種方法</h2>
+              <p id="methodRecommendationLead"></p>
+              <div class="method-card-grid" id="methodCards"></div>
+              <div class="table-wrap method-matrix-wrap">
+                <table id="methodMatrix"></table>
+              </div>
+              <button id="goDashboard" type="button">進入模擬 Dashboard</button>
+            </article>
+
+            <aside class="panel summary-panel">
+              <p class="eyebrow">Priority</p>
+              <h2>建議先做順序</h2>
+              <ol class="priority-list" id="priorityOrder"></ol>
+              <div class="nonpromise">
+                <strong>這不是保證成果，而是驗證方向</strong>
+                <p>方法本身無法保證效果，但透過小規模測試與數據觀察，可以幫助忠欣找到最適合學生的切入點。</p>
+                <span>建議測試週期：2-4 週</span>
               </div>
             </aside>
           </section>
@@ -245,4 +368,3 @@
     <script src="./method-simulator-dashboard.js"></script>
   </body>
 </html>
-
