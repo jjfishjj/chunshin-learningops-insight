@@ -28,6 +28,9 @@ This is a portfolio-ready static prototype, not a production integration. It use
 - `bi-dashboard.html` - standalone BI-style analytics dashboard with upload and report export
 - `bi-dashboard.css` - BI dashboard visual system
 - `bi-dashboard.js` - visualization, Excel/CSV parsing, KPI, table, and decision logic
+- `brand-dashboard.html` - GoPro / 法鉑 lifestyle brand analytics dashboard for proxy brand marketing and operations
+- `brand-dashboard.css` - lifestyle brand BI dashboard visual system
+- `brand-dashboard.js` - mock brand data, channel analysis, cross-sell, inventory, and decision logic
 - `toeic-methodology.html` - revised methodology-first demo based on the partner optimization brief
 - `toeic-methodology.css` - visual system for the TOEIC learning conversion methodology demo
 - `toeic-methodology.js` - validation-topic selector and readiness checklist logic
@@ -44,6 +47,7 @@ This is a portfolio-ready static prototype, not a production integration. It use
 
 - Main proposal: `https://jjfishjj.github.io/chunshin-learningops-insight/`
 - BI dashboard: `https://jjfishjj.github.io/chunshin-learningops-insight/bi-dashboard.html`
+- Lifestyle brand dashboard: `https://jjfishjj.github.io/chunshin-learningops-insight/brand-dashboard.html`
 - TOEIC methodology: `https://jjfishjj.github.io/chunshin-learningops-insight/toeic-methodology.html`
 - Method simulator dashboard: `https://jjfishjj.github.io/chunshin-learningops-insight/method-simulator-dashboard.html`
 

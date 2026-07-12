@@ -1,0 +1,384 @@
+:root {
+  --ink: #142033;
+  --muted: #637086;
+  --paper: #f4f7fa;
+  --white: #ffffff;
+  --line: #d9e2ee;
+  --blue: #245f99;
+  --teal: #0b8f88;
+  --green: #477a3d;
+  --gold: #b27b24;
+  --red: #bd3d37;
+  --violet: #6954a5;
+  --shadow: 0 16px 42px rgba(20, 32, 51, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: Inter, "Noto Sans TC", "PingFang TC", Arial, sans-serif;
+  line-height: 1.55;
+}
+
+.brand-header {
+  min-height: 44vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: end;
+  padding: 72px clamp(20px, 6vw, 86px) 42px;
+  color: var(--white);
+  background:
+    linear-gradient(rgba(8, 18, 30, 0.78), rgba(8, 18, 30, 0.58)),
+    url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=80");
+  background-size: cover;
+  background-position: center;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--teal);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.brand-header .eyebrow {
+  color: #8be5df;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 1020px;
+  margin-bottom: 14px;
+  font-size: clamp(42px, 6vw, 78px);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+h2 {
+  margin-bottom: 12px;
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.18;
+  letter-spacing: 0;
+}
+
+.lede {
+  max-width: 880px;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 21px;
+}
+
+.header-actions {
+  display: grid;
+  gap: 10px;
+}
+
+button,
+.header-actions a {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 900;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-grid;
+  place-items: center;
+}
+
+button:hover,
+.header-actions a:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+main {
+  padding: 26px clamp(16px, 5vw, 72px) 72px;
+}
+
+.control-panel,
+.insight-strip,
+.panel,
+.kpi {
+  background: var(--white);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.control-panel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 12px;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+select {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  background: #fbfcfe;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+}
+
+.insight-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.35fr);
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 18px;
+  border-left: 6px solid var(--teal);
+}
+
+.insight-strip strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 20px;
+}
+
+.insight-strip p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.score-pill {
+  display: grid;
+  align-content: center;
+  min-height: 86px;
+  padding: 14px;
+  background: #effaf8;
+  color: var(--teal);
+  font-weight: 900;
+  text-align: center;
+}
+
+.score-pill strong {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.kpi {
+  min-height: 124px;
+  padding: 16px;
+  display: grid;
+  align-content: space-between;
+}
+
+.kpi span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.kpi strong {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dashboard-grid.secondary {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.65fr);
+}
+
+.panel {
+  padding: 22px;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+
+.chart-stage {
+  min-height: 430px;
+  display: grid;
+  align-items: center;
+}
+
+.bar-row,
+.funnel-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 88px;
+  gap: 12px;
+  align-items: center;
+  margin: 13px 0;
+}
+
+.bar-label {
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.bar-track {
+  height: 26px;
+  background: #e3ebf4;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--blue);
+}
+
+.line-svg,
+.donut-svg {
+  width: 100%;
+  min-height: 390px;
+}
+
+.heatmap {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.heat-cell {
+  min-height: 118px;
+  padding: 14px;
+  color: var(--white);
+  display: grid;
+  align-content: space-between;
+}
+
+.heat-cell strong {
+  font-size: 20px;
+}
+
+.decision-list,
+.report-list,
+.basket-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.decision,
+.report-card,
+.basket-card {
+  padding: 15px;
+  background: var(--paper);
+  border-left: 5px solid var(--teal);
+}
+
+.decision strong,
+.report-card strong,
+.basket-card strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.decision span,
+.report-card span,
+.basket-card span {
+  color: var(--muted);
+}
+
+.basket-card {
+  border-left-color: var(--gold);
+}
+
+.pill,
+.row-count {
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.table-wrap {
+  overflow: auto;
+  max-height: 430px;
+  border: 1px solid var(--line);
+}
+
+table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+  background: var(--white);
+}
+
+th,
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #edf3f8;
+  color: var(--ink);
+}
+
+@media (max-width: 1120px) {
+  .brand-header,
+  .dashboard-grid,
+  .dashboard-grid.secondary,
+  .insight-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .control-panel,
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .control-panel,
+  .kpi-grid,
+  .heatmap {
+    grid-template-columns: 1fr;
+  }
+
+  .panel-head {
+    display: grid;
+  }
+
+  .bar-row,
+  .funnel-row {
+    grid-template-columns: 1fr;
+  }
+}

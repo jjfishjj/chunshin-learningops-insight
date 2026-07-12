@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chun Shin Lifestyle Brand BI Demo</title>
+    <link rel="stylesheet" href="./brand-dashboard.css" />
+  </head>
+  <body>
+    <header class="brand-header">
+      <div>
+        <p class="eyebrow">Chun Shin Lifestyle Brand BI</p>
+        <h1>GoPro / 法鉑代理品牌數據儀表板</h1>
+        <p class="lede">
+          針對忠欣品牌整合行銷需求，模擬代理品牌在通路、活動、商品組合、庫存與行銷投報上的決策報表。
+        </p>
+      </div>
+      <div class="header-actions">
+        <a href="./index.html">原始提案</a>
+        <a href="./bi-dashboard.html">教育 BI</a>
+        <a href="./method-simulator-dashboard.html">方法學模擬器</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="control-panel" aria-label="Brand dashboard controls">
+        <label>
+          品牌
+          <select id="brandSelect">
+            <option value="gopro">GoPro</option>
+            <option value="fabre">法鉑</option>
+            <option value="all">雙品牌比較</option>
+          </select>
+        </label>
+        <label>
+          通路
+          <select id="channelSelect">
+            <option value="all">全部通路</option>
+            <option value="ecommerce">官網 / 電商</option>
+            <option value="retail">實體通路</option>
+            <option value="partner">異業 / 企業合作</option>
+            <option value="social">社群內容</option>
+          </select>
+        </label>
+        <label>
+          分析視角
+          <select id="viewSelect">
+            <option value="campaign">行銷活動成效</option>
+            <option value="product">商品組合</option>
+            <option value="inventory">庫存與補貨</option>
+            <option value="audience">客群分眾</option>
+          </select>
+        </label>
+        <label>
+          模擬期間
+          <select id="periodSelect">
+            <option value="q2">2026 Q2</option>
+            <option value="summer">暑期檔期</option>
+            <option value="holiday">年末禮盒檔期</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="insight-strip" id="insightStrip"></section>
+
+      <section class="kpi-grid" id="kpiGrid" aria-live="polite"></section>
+
+      <section class="dashboard-grid">
+        <article class="panel chart-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Performance</p>
+              <h2 id="primaryTitle">品牌行銷成效</h2>
+            </div>
+            <button id="exportCsv" type="button">匯出 CSV</button>
+          </div>
+          <div class="chart-stage" id="primaryChart"></div>
+        </article>
+
+        <aside class="panel">
+          <p class="eyebrow">Decision Notes</p>
+          <h2>分析摘要與決策</h2>
+          <div class="decision-list" id="decisionList"></div>
+        </aside>
+      </section>
+
+      <section class="dashboard-grid secondary">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Campaign Funnel</p>
+              <h2>觸及到購買漏斗</h2>
+            </div>
+            <span class="pill" id="funnelLabel">Mock data</span>
+          </div>
+          <div class="funnel" id="funnelChart"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Cross Sell</p>
+              <h2>商品關聯與組合銷售</h2>
+            </div>
+            <span class="pill">Market Basket</span>
+          </div>
+          <div class="basket-grid" id="basketGrid"></div>
+        </article>
+      </section>
+
+      <section class="dashboard-grid secondary">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Data Table</p>
+              <h2>模擬品牌營運數據</h2>
+            </div>
+            <span id="rowCount" class="row-count"></span>
+          </div>
+          <div class="table-wrap">
+            <table id="dataTable"></table>
+          </div>
+        </article>
+
+        <article class="panel">
+          <p class="eyebrow">Report Output</p>
+          <h2>面試提案可說的報表設計</h2>
+          <div class="report-list" id="reportList"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="./brand-dashboard.js"></script>
+  </body>
+</html>

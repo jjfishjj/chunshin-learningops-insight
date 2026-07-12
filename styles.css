@@ -665,6 +665,41 @@ select {
   font-size: 12px;
 }
 
+.demo-links-section {
+  background: #f8fbfe;
+}
+
+.demo-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.demo-links a {
+  min-height: 150px;
+  padding: 20px;
+  display: grid;
+  align-content: space-between;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: var(--shadow);
+}
+
+.demo-links a:hover {
+  border-color: var(--teal);
+}
+
+.demo-links strong {
+  font-size: 20px;
+}
+
+.demo-links span {
+  color: var(--muted);
+  font-weight: 800;
+}
+
 footer {
   padding: 26px clamp(20px, 6vw, 96px);
   color: var(--muted);
@@ -683,7 +718,8 @@ footer {
   }
 
   .pain-grid,
-  .kpi-grid {
+  .kpi-grid,
+  .demo-links {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -715,7 +751,8 @@ footer {
   .brief-stats,
   .layer-row,
   .campaign-columns,
-  .metric-strip {
+  .metric-strip,
+  .demo-links {
     grid-template-columns: 1fr;
   }
 
