@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>多益推進方法學模擬器 Dashboard</title>
+    <link rel="stylesheet" href="./method-simulator-dashboard.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark"></span>
+          <strong>多益推進方法學模擬器</strong>
+        </div>
+        <nav aria-label="Dashboard navigation">
+          <a class="nav-link active" href="#overview" data-section="overview">首頁總覽</a>
+          <a class="nav-link" href="#scenario" data-section="scenario">情境模擬</a>
+          <a class="nav-link" href="#diagnosis" data-section="diagnosis">卡點判斷</a>
+          <a class="nav-link" href="#dashboard" data-section="dashboard">活動成效</a>
+          <a class="nav-link" href="#consultant" data-section="consultant">顧問推進</a>
+          <a class="nav-link" href="#report" data-section="report">分析報告</a>
+          <a class="nav-link" href="#summary" data-section="summary">落地總結</a>
+        </nav>
+        <div class="hint-box">
+          <strong>小提醒</strong>
+          <p>本頁使用 mock data 模擬方法學與使用者體驗，不代表忠欣真實營運數據。</p>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <header class="topbar">
+          <div>
+            <h1>多益推進方法學數據儀表板</h1>
+            <p>從情境輸入、卡點判斷到方法建議與分析回饋。</p>
+          </div>
+          <div class="top-actions">
+            <a href="./toeic-methodology.html">方法學頁</a>
+            <a href="./bi-dashboard.html">BI 頁</a>
+            <button id="downloadSummary" type="button">下載摘要</button>
+          </div>
+        </header>
+
+        <main>
+          <section class="panel hero-panel" id="overview">
+            <div>
+              <p class="eyebrow">System Demo</p>
+              <h2>這不是網站，而是可操作的系統 Demo</h2>
+              <p>
+                這個展示把圖片中的系統流程轉成可互動介面：選擇情境、輸入推進問題、判斷主要卡點、推薦驗證方法、展示模擬成效，最後整理下一步與人力配置估算。
+              </p>
+              <button id="startSimulation" type="button">開始模擬</button>
+            </div>
+            <div class="system-graphic" aria-label="System layers">
+              <span>使用者輸入</span>
+              <span>方法學引擎</span>
+              <span>模擬輸出</span>
+              <span>後續延伸</span>
+            </div>
+          </section>
+
+          <section class="stepper" aria-label="Simulation steps">
+            <div class="step active"><span>1</span>選擇情境</div>
+            <div class="step"><span>2</span>輸入問題</div>
+            <div class="step"><span>3</span>判斷卡點</div>
+            <div class="step"><span>4</span>推薦方法</div>
+            <div class="step"><span>5</span>報告輸出</div>
+          </section>
+
+          <section class="section-grid" id="scenario">
+            <article class="panel input-panel">
+              <p class="eyebrow">Scenario Input</p>
+              <h2>請選擇要模擬的推進情境</h2>
+              <div class="scenario-cards" id="scenarioCards"></div>
+              <div class="form-grid">
+                <label>
+                  推廣對象
+                  <select id="targetSelect">
+                    <option value="university">大學生</option>
+                    <option value="freshman">大一到大二</option>
+                    <option value="senior">大三到大四</option>
+                    <option value="enterprise">企業員工</option>
+                  </select>
+                </label>
+                <label>
+                  活動規模
+                  <select id="scaleSelect">
+                    <option value="small">小型 50 人以下</option>
+                    <option value="medium" selected>中型 50-200 人</option>
+                    <option value="large">大型 200 人以上</option>
+                  </select>
+                </label>
+                <label>
+                  名單基礎
+                  <select id="listSelect">
+                    <option value="none">幾乎沒有名單</option>
+                    <option value="partial" selected>有部分名單</option>
+                    <option value="ready">已有完整名單</option>
+                  </select>
+                </label>
+                <label>
+                  最想驗證
+                  <select id="goalSelect">
+                    <option value="message">推廣訊息是否能吸引學生</option>
+                    <option value="activity">哪種活動最能促進參與</option>
+                    <option value="conversion">如何從活動轉成測驗意願</option>
+                    <option value="followup">顧問後續怎麼追蹤</option>
+                  </select>
+                </label>
+              </div>
+            </article>
+
+            <aside class="panel summary-panel">
+              <p class="eyebrow">Current Setup</p>
+              <h2>目前輸入摘要</h2>
+              <dl id="setupSummary"></dl>
+              <div class="system-notes">
+                <strong>系統提醒</strong>
+                <p>建議先聚焦一個目標族群與 1-2 個驗證題目，避免一次測太多變因。</p>
+              </div>
+            </aside>
+          </section>
+
+          <section class="section-grid" id="diagnosis">
+            <article class="panel">
+              <p class="eyebrow">Bottleneck Diagnosis</p>
+              <h2 id="diagnosisTitle">卡點結構分析</h2>
+              <div class="bottleneck-layout">
+                <div class="bars" id="bottleneckBars"></div>
+                <div class="judgement-card" id="judgementCard"></div>
+              </div>
+            </article>
+
+            <aside class="panel">
+              <p class="eyebrow">Recommended Methods</p>
+              <h2>建議先測方法</h2>
+              <ol class="method-list" id="methodList"></ol>
+              <div class="nonpromise">
+                <strong>這不是保證成果</strong>
+                <p>方法本身無法保證效果，但透過小規模測試與數據觀察，可協助忠欣判斷哪一種切入點值得擴大。</p>
+              </div>
+            </aside>
+          </section>
+
+          <section class="panel dashboard-panel" id="dashboard">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Mock Dashboard</p>
+                <h2>模擬活動成效數據</h2>
+              </div>
+              <label>
+                圖表視角
+                <select id="viewSelect">
+                  <option value="activity">活動主題</option>
+                  <option value="stage">轉換階段</option>
+                  <option value="channel">觸及渠道</option>
+                </select>
+              </label>
+            </div>
+            <div class="kpi-strip" id="kpiStrip"></div>
+            <div class="chart-grid">
+              <article>
+                <h3>報名到意願轉換漏斗</h3>
+                <div class="funnel" id="funnelChart"></div>
+              </article>
+              <article>
+                <h3>不同主題報名人數</h3>
+                <div class="bar-chart" id="topicChart"></div>
+              </article>
+              <article>
+                <h3>推薦測驗路徑分布</h3>
+                <div class="donut-wrap" id="pathDonut"></div>
+              </article>
+              <article>
+                <h3>活動後 14 天追蹤互動趨勢</h3>
+                <div class="trend-chart" id="trendChart"></div>
+              </article>
+            </div>
+          </section>
+
+          <section class="section-grid" id="consultant">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Consultant Follow-Up</p>
+                  <h2>顧問跟進清單</h2>
+                </div>
+                <span class="pill">Mock CRM</span>
+              </div>
+              <div class="table-wrap">
+                <table id="consultantTable"></table>
+              </div>
+            </article>
+            <aside class="panel">
+              <p class="eyebrow">Key Insights</p>
+              <h2>核心發現與建議關注</h2>
+              <div class="insights" id="insights"></div>
+            </aside>
+          </section>
+
+          <section class="panel report-panel" id="report">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Report Output</p>
+                <h2>模擬分析報告摘要</h2>
+              </div>
+              <button id="copyReport" type="button">複製摘要</button>
+            </div>
+            <div class="report-blocks" id="reportBlocks"></div>
+          </section>
+
+          <section class="panel final-panel" id="summary">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Execution Summary</p>
+                <h2>怎麼做、預計做哪些、人力怎麼分配</h2>
+              </div>
+              <span class="pill">可作為提案收尾</span>
+            </div>
+            <div class="execution-grid">
+              <article>
+                <h3>怎麼做</h3>
+                <ul id="howList"></ul>
+              </article>
+              <article>
+                <h3>預計做哪些</h3>
+                <ul id="planList"></ul>
+              </article>
+              <article>
+                <h3>人力估算</h3>
+                <div class="staff-list" id="staffList"></div>
+              </article>
+            </div>
+            <div class="closing-note">
+              <strong>總結口徑</strong>
+              <p>
+                這個 demo 的價值不是宣稱能立刻提高多益營收，而是示範如何用 mock data 與可操作流程，讓忠欣先看懂方法學、驗證方向與未來正式系統可以延伸的位置。
+              </p>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="./method-simulator-dashboard.js"></script>
+  </body>
+</html>
+

@@ -31,6 +31,9 @@ This is a portfolio-ready static prototype, not a production integration. It use
 - `toeic-methodology.html` - revised methodology-first demo based on the partner optimization brief
 - `toeic-methodology.css` - visual system for the TOEIC learning conversion methodology demo
 - `toeic-methodology.js` - validation-topic selector and readiness checklist logic
+- `method-simulator-dashboard.html` - operation-style methodology simulator dashboard based on UI reference screenshots
+- `method-simulator-dashboard.css` - simulator dashboard visual system
+- `method-simulator-dashboard.js` - mock data, bottleneck diagnosis, charts, report summary, and manpower estimates
 - `data/sample-metrics.json` - synthetic KPI data
 - `data/bi-sample-dataset.csv` - sample upload dataset for the BI dashboard
 - `docs/data-solution-brief.md` - proposal narrative and pain-point mapping
@@ -42,6 +45,7 @@ This is a portfolio-ready static prototype, not a production integration. It use
 - Main proposal: `https://jjfishjj.github.io/chunshin-learningops-insight/`
 - BI dashboard: `https://jjfishjj.github.io/chunshin-learningops-insight/bi-dashboard.html`
 - TOEIC methodology: `https://jjfishjj.github.io/chunshin-learningops-insight/toeic-methodology.html`
+- Method simulator dashboard: `https://jjfishjj.github.io/chunshin-learningops-insight/method-simulator-dashboard.html`
 
 ## GitHub Pages Deployment
 
