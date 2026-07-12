@@ -339,6 +339,7 @@ const viewSelect = document.querySelector("#viewSelect");
 const copyReport = document.querySelector("#copyReport");
 const downloadSummary = document.querySelector("#downloadSummary");
 const startSimulation = document.querySelector("#startSimulation");
+const biDashboardLink = document.querySelector("#biDashboardLink");
 const campusTargetSelect = document.querySelector("#campusTargetSelect");
 const campusGoalSelect = document.querySelector("#campusGoalSelect");
 const campusInputSummary = document.querySelector("#campusInputSummary");
@@ -352,6 +353,7 @@ const methodMatrix = document.querySelector("#methodMatrix");
 const goDashboard = document.querySelector("#goDashboard");
 
 let activeScenario = "campus";
+const syncStorageKey = "chunshinMethodSimulatorState";
 
 function pct(value) {
   return `${Math.round(value * 1000) / 10}%`;
@@ -401,6 +403,104 @@ function selectedDifficultyModifier() {
 
 function selectedPushModifier() {
   return combinedModifier(checkedValues("pushMethod"), pushMethodModifiers);
+}
+
+function currentSyncState() {
+  return {
+    scenario: activeScenario,
+    target: targetSelect.value,
+    scale: scaleSelect.value,
+    list: listSelect.value,
+    goal: goalSelect.value,
+    difficulties: checkedValues("difficulty"),
+    pushMethods: checkedValues("pushMethod"),
+    chartView: viewSelect.value,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function syncUrlForBi() {
+  const state = currentSyncState();
+  const params = new URLSearchParams({
+    sync: "method",
+    scenario: state.scenario,
+    target: state.target,
+    scale: state.scale,
+    list: state.list,
+    goal: state.goal,
+    difficulties: state.difficulties.join(","),
+    pushMethods: state.pushMethods.join(","),
+    chartView: state.chartView,
+  });
+  return `./bi-dashboard.html?${params.toString()}`;
+}
+
+function splitParam(value) {
+  if (!value) return [];
+  return String(value)
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function stateFromSearch() {
+  const params = new URLSearchParams(window.location.search);
+  if (!["scenario", "target", "scale", "list", "goal", "difficulties", "pushMethods", "chartView"].some((key) => params.has(key))) return null;
+  return {
+    scenario: params.get("scenario"),
+    target: params.get("target"),
+    scale: params.get("scale"),
+    list: params.get("list"),
+    goal: params.get("goal"),
+    difficulties: splitParam(params.get("difficulties")),
+    pushMethods: splitParam(params.get("pushMethods")),
+    chartView: params.get("chartView"),
+  };
+}
+
+function stateFromStorage() {
+  try {
+    const raw = localStorage.getItem(syncStorageKey);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function applyInitialState(state) {
+  if (!state) return;
+  if (state.scenario && scenarioData[state.scenario]) activeScenario = state.scenario;
+  if (state.target && targetModifiers[state.target]) {
+    targetSelect.value = state.target;
+    campusTargetSelect.value = state.target;
+    if (state.target === "enterprise") activeScenario = "enterprise";
+  }
+  if (state.scale && scaleModifiers[state.scale]) scaleSelect.value = state.scale;
+  if (state.list && listModifiers[state.list]) listSelect.value = state.list;
+  if (state.goal && goalModifiers[state.goal]) {
+    goalSelect.value = state.goal;
+    campusGoalSelect.value = state.goal;
+  }
+  if (state.chartView && viewSelect.querySelector(`option[value="${state.chartView}"]`)) viewSelect.value = state.chartView;
+  if (Array.isArray(state.difficulties) && state.difficulties.length) {
+    document.querySelectorAll('input[name="difficulty"]').forEach((input) => {
+      input.checked = state.difficulties.includes(input.value);
+    });
+  }
+  if (Array.isArray(state.pushMethods) && state.pushMethods.length) {
+    document.querySelectorAll('input[name="pushMethod"]').forEach((input) => {
+      input.checked = state.pushMethods.includes(input.value);
+    });
+  }
+}
+
+function saveSyncState() {
+  try {
+    localStorage.setItem(syncStorageKey, JSON.stringify(currentSyncState()));
+  } catch {
+    return;
+  }
+  biDashboardLink.href = syncUrlForBi();
 }
 
 function currentModifiers() {
@@ -998,6 +1098,7 @@ function renderAll() {
   renderInsights();
   renderReport();
   renderExecutionSummary();
+  saveSyncState();
 }
 
 function handleCoreControlChange() {
@@ -1071,4 +1172,5 @@ saveCampusDraft.addEventListener("click", () => {
 runCampusAnalysis.addEventListener("click", () => document.querySelector("#diagnosis").scrollIntoView({ behavior: "smooth" }));
 goDashboard.addEventListener("click", () => document.querySelector("#dashboard").scrollIntoView({ behavior: "smooth" }));
 
+applyInitialState(stateFromSearch() || stateFromStorage());
 renderAll();

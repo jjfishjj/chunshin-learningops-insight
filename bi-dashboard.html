@@ -18,6 +18,7 @@
       </div>
       <div class="header-actions">
         <a href="./index.html">回到原始提案</a>
+        <a href="./method-simulator-dashboard.html">方法學模擬器</a>
         <button id="printReport" type="button">列印 / PDF</button>
         <button id="downloadReport" type="button">下載 HTML 報表</button>
       </div>
@@ -57,6 +58,18 @@
           上傳 Excel / CSV
           <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" />
         </label>
+      </section>
+
+      <section class="sync-panel" id="syncPanel" hidden>
+        <div>
+          <p class="eyebrow">Linked Demo State</p>
+          <h2>已連動方法學模擬器設定</h2>
+          <p id="syncSummary"></p>
+        </div>
+        <div class="sync-actions">
+          <a id="backToMethod" href="./method-simulator-dashboard.html">回方法學頁調整</a>
+          <button id="clearSync" type="button">解除同步</button>
+        </div>
       </section>
 
       <section class="status-strip" id="dataStatus">
@@ -126,4 +139,3 @@
     <script src="./bi-dashboard.js"></script>
   </body>
 </html>
-

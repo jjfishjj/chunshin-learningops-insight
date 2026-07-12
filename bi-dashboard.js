@@ -39,8 +39,54 @@ const campaignNames = {
   memory: "記憶學習工作坊",
 };
 
+const targetNames = {
+  university: "大學生",
+  freshman: "大一到大二",
+  senior: "大三到大四",
+  enterprise: "企業員工",
+};
+
+const scaleNames = {
+  small: "小型 50 人以下",
+  medium: "中型 50-200 人",
+  large: "大型 200 人以上",
+};
+
+const listNames = {
+  none: "幾乎沒有名單",
+  partial: "有部分名單",
+  ready: "已有完整名單",
+};
+
+const goalNames = {
+  message: "推廣訊息是否能吸引學生",
+  activity: "哪種活動最能促進參與",
+  conversion: "如何從活動轉成測驗意願",
+  followup: "顧問後續怎麼追蹤",
+};
+
+const difficultyNames = {
+  engagement: "學生參與度不足",
+  registration: "報名轉換率低",
+  reach: "訊息觸及不足",
+  measurement: "活動成效不明",
+  resource: "資源 / 預算有限",
+  other: "其他",
+};
+
+const pushMethodNames = {
+  lecture: "講座 / 說明會",
+  class: "班級推薦",
+  contest: "競賽 / 挑戰賽",
+  online: "線上活動",
+  club: "社團聯合",
+  other: "其他",
+};
+
 let activeRows = builtInRows;
 let sourceLabel = "內建模擬資料";
+let syncedState = null;
+const syncStorageKey = "chunshinMethodSimulatorState";
 
 const scenarioFilter = document.querySelector("#scenarioFilter");
 const campaignFilter = document.querySelector("#campaignFilter");
@@ -56,6 +102,10 @@ const dataStatus = document.querySelector("#dataStatus");
 const exportCsv = document.querySelector("#exportCsv");
 const printReport = document.querySelector("#printReport");
 const downloadReport = document.querySelector("#downloadReport");
+const syncPanel = document.querySelector("#syncPanel");
+const syncSummary = document.querySelector("#syncSummary");
+const clearSync = document.querySelector("#clearSync");
+const backToMethod = document.querySelector("#backToMethod");
 
 function numberValue(value) {
   if (typeof value === "number") return value;
@@ -71,6 +121,165 @@ function percent(value) {
 
 function money(value) {
   return `NT$${Math.round(numberValue(value)).toLocaleString("zh-TW")}`;
+}
+
+function splitList(value) {
+  if (Array.isArray(value)) return value.filter(Boolean);
+  if (!value) return [];
+  return String(value)
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function stateFromSearch() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("sync") !== "method") return null;
+  return {
+    scenario: params.get("scenario") || "campus",
+    target: params.get("target") || "university",
+    scale: params.get("scale") || "medium",
+    list: params.get("list") || "partial",
+    goal: params.get("goal") || "message",
+    difficulties: splitList(params.get("difficulties")),
+    pushMethods: splitList(params.get("pushMethods")),
+    chartView: params.get("chartView") || "activity",
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function stateFromStorage() {
+  try {
+    const raw = localStorage.getItem(syncStorageKey);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function selectedScenarioFromState(state) {
+  if (state.target === "enterprise" || state.scenario === "enterprise") return "enterprise";
+  return "campus";
+}
+
+function selectedCampaignFromState(state) {
+  if (state.pushMethods.includes("club")) return "club";
+  if (state.pushMethods.includes("lecture")) return "lecture";
+  if (state.pushMethods.includes("contest") || state.goal === "activity") return "memory";
+  return "toeic";
+}
+
+function syncFactors(state) {
+  const factor = {
+    learners: 1,
+    registrations: 1,
+    app_active_rate: 1,
+    attendance_rate: 1,
+    satisfaction: 1,
+    revenue: 1,
+    risk_score: 1,
+    score_lift: 1,
+  };
+  const scale = {
+    small: { learners: 0.55, registrations: 0.68, attendance_rate: 1.1, risk_score: 0.9, revenue: 0.7 },
+    medium: {},
+    large: { learners: 1.82, registrations: 1.52, attendance_rate: 0.91, risk_score: 1.18, revenue: 1.42 },
+  }[state.scale] || {};
+  const list = {
+    none: { learners: 0.78, registrations: 0.72, app_active_rate: 0.92, risk_score: 1.28, revenue: 0.76 },
+    partial: {},
+    ready: { learners: 1.13, registrations: 1.22, app_active_rate: 1.08, risk_score: 0.82, revenue: 1.18 },
+  }[state.list] || {};
+  const goal = {
+    message: { learners: 1.12, app_active_rate: 1.04, risk_score: 0.95 },
+    activity: { learners: 1.08, attendance_rate: 1.06, satisfaction: 1.04 },
+    conversion: { registrations: 1.18, revenue: 1.16, risk_score: 0.96 },
+    followup: { app_active_rate: 1.08, risk_score: 0.9, revenue: 1.08 },
+  }[state.goal] || {};
+  [scale, list, goal].forEach((modifier) => {
+    Object.entries(modifier).forEach(([key, value]) => {
+      factor[key] *= value;
+    });
+  });
+  state.difficulties.forEach((difficulty) => {
+    const modifiers = {
+      engagement: { registrations: 0.9, attendance_rate: 0.94, satisfaction: 0.96, risk_score: 1.16 },
+      registration: { registrations: 0.84, revenue: 0.88, risk_score: 1.14 },
+      reach: { learners: 0.86, registrations: 0.92, app_active_rate: 0.96, risk_score: 1.1 },
+      measurement: { satisfaction: 0.97, risk_score: 1.12, score_lift: 0.94 },
+      resource: { learners: 0.92, attendance_rate: 1.02, revenue: 0.9, risk_score: 1.08 },
+      other: { risk_score: 1.04 },
+    }[difficulty];
+    Object.entries(modifiers || {}).forEach(([key, value]) => {
+      factor[key] *= value;
+    });
+  });
+  state.pushMethods.forEach((method) => {
+    const modifiers = {
+      lecture: { learners: 1.08, attendance_rate: 1.04, registrations: 1.04 },
+      class: { attendance_rate: 1.08, registrations: 1.04, risk_score: 0.95 },
+      contest: { learners: 1.06, registrations: 1.08, satisfaction: 1.05 },
+      online: { learners: 1.14, app_active_rate: 1.1, attendance_rate: 0.93 },
+      club: { learners: 1.1, registrations: 1.06, risk_score: 0.94 },
+      other: {},
+    }[method];
+    Object.entries(modifiers || {}).forEach(([key, value]) => {
+      factor[key] *= value;
+    });
+  });
+  return factor;
+}
+
+function applyMethodSync(state) {
+  const selectedScenario = selectedScenarioFromState(state);
+  const selectedCampaign = selectedCampaignFromState(state);
+  const factors = syncFactors(state);
+  const adjusted = builtInRows.map((row) => {
+    const scenarioBoost = row.scenario === selectedScenario ? 1 : 0.58;
+    const campaignBoost = row.campaign === selectedCampaign ? 1.18 : 0.86;
+    return {
+      ...row,
+      learners: Math.round(row.learners * factors.learners * scenarioBoost * campaignBoost),
+      registrations: Math.round(row.registrations * factors.registrations * scenarioBoost * campaignBoost),
+      app_active_rate: Math.min(row.app_active_rate * factors.app_active_rate, 0.96),
+      attendance_rate: Math.min(row.attendance_rate * factors.attendance_rate, 0.96),
+      satisfaction: Math.min(row.satisfaction * factors.satisfaction, 5),
+      revenue: Math.round(row.revenue * factors.revenue * scenarioBoost * campaignBoost),
+      risk_score: Math.min(row.risk_score * factors.risk_score, 0.92),
+      score_lift: Math.round(row.score_lift * factors.score_lift),
+    };
+  });
+  syncedState = state;
+  activeRows = adjusted;
+  sourceLabel = "方法學模擬器連動資料";
+  scenarioFilter.value = selectedScenario;
+  campaignFilter.value = selectedCampaign;
+  if (state.chartView === "stage") chartType.value = "line";
+  if (state.chartView === "channel") chartType.value = "heatmap";
+  if (state.chartView === "activity") chartType.value = "bar";
+  renderSyncPanel();
+}
+
+function renderSyncPanel() {
+  if (!syncedState) {
+    syncPanel.hidden = true;
+    return;
+  }
+  const difficulties = syncedState.difficulties.map((value) => difficultyNames[value]).filter(Boolean);
+  const methods = syncedState.pushMethods.map((value) => pushMethodNames[value]).filter(Boolean);
+  const params = new URLSearchParams({
+    scenario: syncedState.scenario || selectedScenarioFromState(syncedState),
+    target: syncedState.target,
+    scale: syncedState.scale,
+    list: syncedState.list,
+    goal: syncedState.goal,
+    difficulties: syncedState.difficulties.join(","),
+    pushMethods: syncedState.pushMethods.join(","),
+    chartView: syncedState.chartView || "activity",
+  });
+  syncPanel.hidden = false;
+  syncSummary.textContent = `目前套用：${targetNames[syncedState.target] || syncedState.target}、${scaleNames[syncedState.scale] || syncedState.scale}、${listNames[syncedState.list] || syncedState.list}；驗證目標為「${goalNames[syncedState.goal] || syncedState.goal}」。困難：${difficulties.join("、") || "未選"}；推動形式：${methods.join("、") || "未選"}。`;
+  backToMethod.href = `./method-simulator-dashboard.html?${params.toString()}`;
 }
 
 function filteredRows() {
@@ -262,6 +471,12 @@ function renderDecisions(rows) {
   const summary = summarize(rows);
   const conversion = summary.learners ? summary.registrations / summary.learners : 0;
   const decisions = [];
+  if (syncedState) {
+    decisions.push([
+      "方法學連動判讀",
+      `此 BI 頁已套用「${goalNames[syncedState.goal] || syncedState.goal}」與「${scaleNames[syncedState.scale] || syncedState.scale}」設定，數據會反映目前校園推廣假設。`,
+    ]);
+  }
   if (conversion < 0.2) {
     decisions.push(["提升報名轉換", "目前轉換率偏低，建議把講座 CTA 改成 7 天挑戰或限時模擬測驗，降低第一次行動門檻。"]);
   } else {
@@ -313,7 +528,8 @@ function renderAll() {
   renderChart(rows);
   renderDecisions(rows);
   renderTable(rows);
-  dataStatus.innerHTML = `<span>資料來源：${sourceLabel}</span><span>目前篩選：${rows.length} / ${activeRows.length} rows</span>`;
+  renderSyncPanel();
+  dataStatus.innerHTML = `<span>資料來源：${sourceLabel}</span><span>目前篩選：${rows.length} / ${activeRows.length} rows</span><span>資料不會離開瀏覽器</span>`;
 }
 
 function normalizeUploadedRows(rows) {
@@ -385,6 +601,7 @@ async function handleFile(file) {
     activeRows = normalizeUploadedRows(XLSX.utils.sheet_to_json(firstSheet));
   }
   sourceLabel = `上傳檔案：${file.name}`;
+  syncedState = null;
   scenarioFilter.value = "all";
   campaignFilter.value = "all";
   renderAll();
@@ -413,6 +630,20 @@ fileInput.addEventListener("change", (event) => handleFile(event.target.files[0]
 exportCsv.addEventListener("click", () => download("chunshin-bi-summary.csv", summaryCsv(), "text/csv"));
 printReport.addEventListener("click", () => window.print());
 downloadReport.addEventListener("click", () => download("chunshin-bi-report.html", document.documentElement.outerHTML, "text/html"));
+clearSync.addEventListener("click", () => {
+  try {
+    localStorage.removeItem(syncStorageKey);
+  } catch {
+    // Ignore storage restrictions in private browsing.
+  }
+  syncedState = null;
+  activeRows = builtInRows;
+  sourceLabel = "內建模擬資料";
+  scenarioFilter.value = "all";
+  campaignFilter.value = "all";
+  renderAll();
+});
 
+const initialSyncState = stateFromSearch() || stateFromStorage();
+if (initialSyncState) applyMethodSync(initialSyncState);
 renderAll();
-
