@@ -73,6 +73,109 @@ const trendRows = [
   { day: "Day 14", personal: 70, material: 34, consult: 12 },
 ];
 
+const targetModifiers = {
+  university: {
+    signups: 1,
+    rates: { arrival: 1, survey: 1, intent: 1, followup: 1, returnRate: 1 },
+    bottlenecks: { awareness: 0, motivation: 0, execution: 0, conversion: 0, retention: 0 },
+    note: "大學生族群可先用職涯、畢業門檻與同儕活動切入。",
+  },
+  freshman: {
+    signups: 0.86,
+    rates: { arrival: 0.94, survey: 1.08, intent: 0.91, followup: 0.88, returnRate: 1.04 },
+    bottlenecks: { awareness: 0.4, motivation: 0.8, execution: -0.1, conversion: 0.4, retention: -0.2 },
+    note: "大一到大二較早期，適合先建立英文學習好感與低壓力參與。",
+  },
+  senior: {
+    signups: 1.12,
+    rates: { arrival: 1.05, survey: 0.98, intent: 1.12, followup: 1.08, returnRate: 0.94 },
+    bottlenecks: { awareness: -0.2, motivation: -0.5, execution: 0.3, conversion: 0.8, retention: 0.2 },
+    note: "大三到大四職涯壓力較明確，需把活動導向測驗路徑與顧問跟進。",
+  },
+  enterprise: {
+    signups: 0.72,
+    rates: { arrival: 1.1, survey: 1.03, intent: 0.94, followup: 1.22, returnRate: 1.1 },
+    bottlenecks: { awareness: 0.6, motivation: -0.2, execution: 1.2, conversion: 0.7, retention: 0.1 },
+    note: "企業端重點在 HR 採用、主管說服、部門流程與成效回報。",
+  },
+};
+
+const scaleModifiers = {
+  small: {
+    signups: 0.52,
+    rates: { arrival: 1.12, survey: 1.08, intent: 1.04, followup: 1.18, returnRate: 1.12 },
+    bottlenecks: { awareness: -0.2, motivation: -0.1, execution: -0.7, conversion: -0.3, retention: -0.2 },
+  },
+  medium: {
+    signups: 1,
+    rates: { arrival: 1, survey: 1, intent: 1, followup: 1, returnRate: 1 },
+    bottlenecks: { awareness: 0, motivation: 0, execution: 0, conversion: 0, retention: 0 },
+  },
+  large: {
+    signups: 1.85,
+    rates: { arrival: 0.88, survey: 0.91, intent: 0.92, followup: 0.82, returnRate: 0.84 },
+    bottlenecks: { awareness: 0.2, motivation: 0.1, execution: 1.1, conversion: 0.7, retention: 0.5 },
+  },
+};
+
+const listModifiers = {
+  none: {
+    signups: 0.78,
+    rates: { arrival: 0.9, survey: 0.96, intent: 0.92, followup: 0.74, returnRate: 0.82 },
+    bottlenecks: { awareness: 0.9, motivation: 0.2, execution: 0.3, conversion: 0.8, retention: 0.5 },
+  },
+  partial: {
+    signups: 1,
+    rates: { arrival: 1, survey: 1, intent: 1, followup: 1, returnRate: 1 },
+    bottlenecks: { awareness: 0, motivation: 0, execution: 0, conversion: 0, retention: 0 },
+  },
+  ready: {
+    signups: 1.16,
+    rates: { arrival: 1.05, survey: 1.04, intent: 1.06, followup: 1.18, returnRate: 1.13 },
+    bottlenecks: { awareness: -0.8, motivation: -0.1, execution: -0.2, conversion: -0.5, retention: -0.3 },
+  },
+};
+
+const goalModifiers = {
+  message: {
+    bottlenecks: { awareness: 0.9, motivation: 0.1, execution: 0, conversion: 0.2, retention: 0 },
+    method: "訊息 A/B 測試與表單開啟率追蹤",
+  },
+  activity: {
+    bottlenecks: { awareness: 0.1, motivation: 0.8, execution: 0.3, conversion: 0.1, retention: 0 },
+    method: "兩種活動主題小樣本測試",
+  },
+  conversion: {
+    bottlenecks: { awareness: -0.1, motivation: 0.1, execution: 0.2, conversion: 1, retention: 0.2 },
+    method: "活動後測驗路徑 CTA 測試",
+  },
+  followup: {
+    bottlenecks: { awareness: 0, motivation: 0, execution: 0.3, conversion: 0.4, retention: 1 },
+    method: "顧問分眾追蹤與 14 天回流測試",
+  },
+};
+
+const chartSets = {
+  activity: {
+    topicTitle: "不同主題報名人數",
+    donutTitle: "推薦測驗路徑分布",
+    funnelTitle: "報名到意願轉換漏斗",
+    trendTitle: "活動後 14 天追蹤互動趨勢",
+  },
+  stage: {
+    topicTitle: "各轉換階段人數",
+    donutTitle: "意願等級分布",
+    funnelTitle: "完整轉換階段漏斗",
+    trendTitle: "階段留存趨勢",
+  },
+  channel: {
+    topicTitle: "不同觸及渠道成效",
+    donutTitle: "渠道來源占比",
+    funnelTitle: "渠道觸及到報名漏斗",
+    trendTitle: "渠道互動衰退趨勢",
+  },
+};
+
 const consultantRows = [
   ["陳同學", "國立台北大學", "待聯繫", "發送測驗介紹與時程"],
   ["李同學", "輔仁大學", "已回覆", "預約落點諮詢"],
@@ -139,6 +242,57 @@ function pct(value) {
   return `${Math.round(value * 1000) / 10}%`;
 }
 
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function rate(value) {
+  return clamp(value, 0.05, 0.96);
+}
+
+function currentModifiers() {
+  return [
+    targetModifiers[targetSelect.value],
+    scaleModifiers[scaleSelect.value],
+    listModifiers[listSelect.value],
+    goalModifiers[goalSelect.value],
+  ];
+}
+
+function adjustedBottlenecks() {
+  const base = scenarioData[activeScenario].bottlenecks;
+  const adjusted = { ...base };
+  currentModifiers().forEach((modifier) => {
+    Object.entries(modifier.bottlenecks || {}).forEach(([key, delta]) => {
+      adjusted[key] = clamp((adjusted[key] || 0) + delta, 1, 10);
+    });
+  });
+  return adjusted;
+}
+
+function strongestBottleneck() {
+  const labels = {
+    awareness: "認知不足",
+    motivation: "主動動機不足",
+    execution: "推進流程不清",
+    conversion: "轉換設計不足",
+    retention: "後續回流不足",
+  };
+  const entries = Object.entries(adjustedBottlenecks()).sort((a, b) => b[1] - a[1]);
+  return { key: entries[0][0], label: labels[entries[0][0]], score: entries[0][1], second: labels[entries[1][0]] };
+}
+
+function suggestedAvoidText(key) {
+  const avoidMap = {
+    awareness: "直接辦大型活動，卻沒有先確認訊息是否能吸引目標族群",
+    motivation: "直接硬推報名，沒有先降低學生對英文與測驗的心理門檻",
+    execution: "一次整合太多流程，造成校方、顧問與活動端難以執行",
+    conversion: "活動結束後只給報名連結，沒有設計下一步與測驗路徑",
+    retention: "只做單次活動，沒有 7 到 14 天的回流與顧問追蹤",
+  };
+  return avoidMap[key];
+}
+
 function renderScenarioCards() {
   scenarioCards.innerHTML = Object.entries(scenarioData)
     .map(
@@ -176,6 +330,8 @@ function renderSetup() {
 
 function renderDiagnosis() {
   const scenario = scenarioData[activeScenario];
+  const bottlenecks = adjustedBottlenecks();
+  const strongest = strongestBottleneck();
   const labels = {
     awareness: "認知",
     motivation: "動機",
@@ -183,7 +339,7 @@ function renderDiagnosis() {
     conversion: "轉換",
     retention: "回流",
   };
-  bottleneckBars.innerHTML = Object.entries(scenario.bottlenecks)
+  bottleneckBars.innerHTML = Object.entries(bottlenecks)
     .map(([key, value]) => {
       const color = value > 7 ? "#c83f3b" : value > 5 ? "#e87817" : "#0b8c86";
       return `
@@ -196,28 +352,38 @@ function renderDiagnosis() {
     })
     .join("");
   judgementCard.innerHTML = `
-    <strong>系統判斷：${scenario.main}</strong>
-    <p>次要卡點：${scenario.secondary}</p>
-    <p>不建議先做：${scenario.avoid}</p>
+    <strong>系統判斷：${strongest.label}</strong>
+    <p>次要卡點：${strongest.second}</p>
+    <p>參數影響：${targetModifiers[targetSelect.value].note}</p>
+    <p>不建議先做：${suggestedAvoidText(strongest.key) || scenario.avoid}</p>
   `;
-  methodList.innerHTML = scenario.methods.map((method) => `<li>${method}</li>`).join("");
+  const methods = [goalModifiers[goalSelect.value].method, ...scenario.methods].filter((method, index, arr) => arr.indexOf(method) === index);
+  methodList.innerHTML = methods.slice(0, 4).map((method) => `<li>${method}</li>`).join("");
 }
 
 function adjustedKpis() {
   const base = scenarioData[activeScenario].kpis;
-  const scaleFactor = { small: 0.52, medium: 1, large: 1.85 }[scaleSelect.value];
-  const listFactor = { none: 0.78, partial: 1, ready: 1.16 }[listSelect.value];
-  const signups = Math.round(base.signups * scaleFactor * listFactor);
+  const modifiers = currentModifiers();
+  const signupFactor = modifiers.reduce((factor, modifier) => factor * (modifier.signups || 1), 1);
+  const rateFactor = (key) => modifiers.reduce((factor, modifier) => factor * ((modifier.rates && modifier.rates[key]) || 1), 1);
+  const signups = Math.round(base.signups * signupFactor);
+  const arrival = rate(base.arrival * rateFactor("arrival"));
+  const survey = rate(base.survey * rateFactor("survey"));
+  const intent = rate(base.intent * rateFactor("intent"));
+  const followup = rate(base.followup * rateFactor("followup"));
+  const returnRate = rate(base.returnRate * rateFactor("returnRate"));
   return {
     signups,
-    arrival: base.arrival,
-    survey: base.survey,
-    intent: base.intent,
-    followup: base.followup,
-    returnRate: base.returnRate,
-    arrived: Math.round(signups * base.arrival),
-    completed: Math.round(signups * base.arrival * base.survey),
-    interested: Math.round(signups * base.arrival * base.survey * base.intent),
+    arrival,
+    survey,
+    intent,
+    followup,
+    returnRate,
+    arrived: Math.round(signups * arrival),
+    completed: Math.round(signups * arrival * survey),
+    interested: Math.round(signups * arrival * survey * intent),
+    followups: Math.round(signups * arrival * survey * intent * followup),
+    returned: Math.round(signups * arrival * survey * intent * followup * returnRate),
   };
 }
 
@@ -236,14 +402,40 @@ function renderKpis() {
     .join("");
 }
 
+function renderChartTitles() {
+  const titles = chartSets[viewSelect.value];
+  const cards = document.querySelectorAll(".chart-grid article h3");
+  if (cards[0]) cards[0].textContent = titles.funnelTitle;
+  if (cards[1]) cards[1].textContent = titles.topicTitle;
+  if (cards[2]) cards[2].textContent = titles.donutTitle;
+  if (cards[3]) cards[3].textContent = titles.trendTitle;
+}
+
 function renderFunnel() {
   const kpi = adjustedKpis();
-  const stages = [
-    ["報名數", kpi.signups],
-    ["到場數", kpi.arrived],
-    ["問卷完成", kpi.completed],
-    ["有意願進一步了解", kpi.interested],
-  ];
+  const stagesByView = {
+    activity: [
+      ["報名數", kpi.signups],
+      ["到場數", kpi.arrived],
+      ["問卷完成", kpi.completed],
+      ["有意願進一步了解", kpi.interested],
+    ],
+    stage: [
+      ["表單開啟", Math.round(kpi.signups * 1.42)],
+      ["報名數", kpi.signups],
+      ["到場數", kpi.arrived],
+      ["問卷完成", kpi.completed],
+      ["顧問跟進", kpi.followups],
+      ["回流互動", kpi.returned],
+    ],
+    channel: [
+      ["社群 / 校園觸及", Math.round(kpi.signups * 4.8)],
+      ["表單開啟", Math.round(kpi.signups * 2.1)],
+      ["活動報名", kpi.signups],
+      ["到場互動", kpi.arrived],
+    ],
+  };
+  const stages = stagesByView[viewSelect.value];
   const max = stages[0][1] || 1;
   funnelChart.innerHTML = stages
     .map(
@@ -258,9 +450,41 @@ function renderFunnel() {
     .join("");
 }
 
+function adjustedTopicRows() {
+  const kpi = adjustedKpis();
+  const activityFactor = kpi.signups / scenarioData[activeScenario].kpis.signups;
+  const view = viewSelect.value;
+  if (view === "stage") {
+    return [
+      { topic: "報名", value: kpi.signups },
+      { topic: "到場", value: kpi.arrived },
+      { topic: "問卷完成", value: kpi.completed },
+      { topic: "有意願", value: kpi.interested },
+      { topic: "顧問跟進", value: kpi.followups },
+      { topic: "回流", value: kpi.returned },
+    ];
+  }
+  if (view === "channel") {
+    const channelBase = [
+      ["校園官方信件", 0.32],
+      ["社團 / 系學會", 0.27],
+      ["講座現場 QR", 0.22],
+      ["同儕推薦", 0.13],
+      ["廣告 / 貼文", 0.06],
+    ];
+    return channelBase.map(([topic, share]) => ({ topic, value: Math.round(kpi.signups * share) }));
+  }
+  return topicRows.map((row, index) => {
+    const goalBoost = goalSelect.value === "activity" && index < 2 ? 1.16 : 1;
+    const targetBoost = targetSelect.value === "senior" && row.topic.includes("職場") ? 2.4 : 1;
+    return { topic: row.topic, value: Math.round(row.value * activityFactor * goalBoost * targetBoost) };
+  });
+}
+
 function renderTopicChart() {
-  const max = Math.max(...topicRows.map((row) => row.value));
-  topicChart.innerHTML = topicRows
+  const rows = adjustedTopicRows();
+  const max = Math.max(...rows.map((row) => row.value), 1);
+  topicChart.innerHTML = rows
     .map(
       (row) => `
         <div class="topic-row">
@@ -273,10 +497,32 @@ function renderTopicChart() {
     .join("");
 }
 
+function adjustedDonutRows() {
+  const kpi = adjustedKpis();
+  if (viewSelect.value === "stage") {
+    return [
+      { label: "高意願", value: Math.max(kpi.followups, 1), color: "#1f6fd1" },
+      { label: "中意願", value: Math.max(kpi.interested - kpi.followups, 1), color: "#0b8c86" },
+      { label: "待培養", value: Math.max(kpi.completed - kpi.interested, 1), color: "#e87817" },
+    ];
+  }
+  if (viewSelect.value === "channel") {
+    return [
+      { label: "校園官方", value: Math.round(kpi.signups * 0.34), color: "#1f6fd1" },
+      { label: "社團轉發", value: Math.round(kpi.signups * 0.28), color: "#0b8c86" },
+      { label: "講座現場", value: Math.round(kpi.signups * 0.24), color: "#e87817" },
+      { label: "同儕推薦", value: Math.round(kpi.signups * 0.14), color: "#7155b7" },
+    ];
+  }
+  const pathFactor = kpi.completed / 529;
+  return pathRows.map((row) => ({ ...row, value: Math.max(Math.round(row.value * pathFactor), 1) }));
+}
+
 function renderDonut() {
-  const total = pathRows.reduce((sum, row) => sum + row.value, 0);
+  const rows = adjustedDonutRows();
+  const total = rows.reduce((sum, row) => sum + row.value, 0);
   let offset = 25;
-  const circles = pathRows
+  const circles = rows
     .map((row) => {
       const share = (row.value / total) * 100;
       const circle = `<circle r="72" cx="115" cy="115" fill="transparent" stroke="${row.color}" stroke-width="30" stroke-dasharray="${share} ${100 - share}" stroke-dashoffset="${offset}" />`;
@@ -284,12 +530,13 @@ function renderDonut() {
       return circle;
     })
     .join("");
+  const centerLabel = viewSelect.value === "activity" ? "總計" : viewSelect.value === "stage" ? "意願" : "渠道";
   pathDonut.innerHTML = `
     <svg viewBox="0 0 520 245" role="img" aria-label="Recommended TOEIC path distribution">
       <g transform="rotate(-90 115 115)">${circles}</g>
-      <text x="115" y="110" text-anchor="middle" font-size="20" font-weight="900" fill="#172033">總計</text>
+      <text x="115" y="110" text-anchor="middle" font-size="20" font-weight="900" fill="#172033">${centerLabel}</text>
       <text x="115" y="136" text-anchor="middle" font-size="17" fill="#627085">${total} 份問卷</text>
-      ${pathRows
+      ${rows
         .map((row, index) => {
           const y = 72 + index * 34;
           return `<rect x="260" y="${y - 15}" width="16" height="16" fill="${row.color}" /><text x="286" y="${y}" fill="#172033" font-size="16">${row.label} ${pct(row.value / total)}</text>`;
@@ -302,18 +549,29 @@ function renderDonut() {
 function renderTrend() {
   const width = 520;
   const height = 245;
-  const max = 180;
+  const kpi = adjustedKpis();
+  const trendFactor = kpi.signups / scenarioData[activeScenario].kpis.signups;
   const series = [
     ["personal", "#1f6fd1"],
     ["material", "#0b8c86"],
     ["consult", "#e87817"],
   ];
+  const max = Math.max(
+    80,
+    ...trendRows.flatMap((row) =>
+      series.map(([key]) => {
+        const viewFactor = viewSelect.value === "channel" && key === "material" ? 1.22 : viewSelect.value === "stage" && key === "consult" ? 1.28 : 1;
+        return row[key] * trendFactor * viewFactor;
+      }),
+    ),
+  );
   const polylines = series
     .map(([key, color]) => {
       const points = trendRows
         .map((row, index) => {
           const x = 28 + (index / (trendRows.length - 1)) * (width - 56);
-          const y = height - 28 - (row[key] / max) * (height - 58);
+          const viewFactor = viewSelect.value === "channel" && key === "material" ? 1.22 : viewSelect.value === "stage" && key === "consult" ? 1.28 : 1;
+          const y = height - 28 - ((row[key] * trendFactor * viewFactor) / max) * (height - 58);
           return `${x},${y}`;
         })
         .join(" ");
@@ -331,10 +589,20 @@ function renderTrend() {
 }
 
 function renderConsultants() {
+  const rows = consultantRows.map((row, index) => {
+    const next = [...row];
+    if (goalSelect.value === "followup" && index < 2) next[2] = "優先聯繫";
+    if (listSelect.value === "none" && index > 2) next[3] = "先補來源標籤與聯絡同意";
+    if (targetSelect.value === "enterprise") {
+      next[0] = ["HR 王小姐", "L&D 林經理", "部門主管", "訓練窗口", "人資專員"][index];
+      next[1] = ["科技製造", "金融服務", "跨國業務", "企業實習", "內訓名單"][index];
+    }
+    return next;
+  });
   consultantTable.innerHTML = `
     <thead><tr><th>對象</th><th>來源</th><th>狀態</th><th>下一步</th></tr></thead>
     <tbody>
-      ${consultantRows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}
+      ${rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join("")}</tr>`).join("")}
     </tbody>
   `;
 }
@@ -342,9 +610,12 @@ function renderConsultants() {
 function renderInsights() {
   const scenario = scenarioData[activeScenario];
   const kpi = adjustedKpis();
+  const strongest = strongestBottleneck();
+  const viewText = viewSelect.options[viewSelect.selectedIndex].text;
   const items = [
-    ["主要卡點", `${scenario.main}，建議把活動起點放在降低參與門檻與建立學習信心。`],
-    ["資料判讀", `目前模擬有 ${kpi.interested} 人具備進一步了解意願，可交由顧問分批追蹤。`],
+    ["主要卡點", `${strongest.label} 目前分數 ${strongest.score.toFixed(1)}，建議把活動起點放在該卡點的低風險驗證。`],
+    ["資料判讀", `目前模擬有 ${kpi.interested} 人具備進一步了解意願，其中 ${kpi.followups} 人可交由顧問分批追蹤。`],
+    ["圖表視角", `目前使用「${viewText}」觀察資料，圖表已同步切換資料維度。`],
     ["建議關注", "不要只看報名數，需同時追蹤到場、問卷完成、測驗意願、回流與顧問下一步。"],
   ];
   insights.innerHTML = items.map(([title, body]) => `<div class="insight"><strong>${title}</strong><span>${body}</span></div>`).join("");
@@ -353,11 +624,12 @@ function renderInsights() {
 function renderReport() {
   const scenario = scenarioData[activeScenario];
   const kpi = adjustedKpis();
+  const strongest = strongestBottleneck();
   const blocks = [
     ["一、情境摘要", `目前模擬情境為「${scenario.label}」，推廣對象為 ${targetSelect.options[targetSelect.selectedIndex].text}。`],
-    ["二、主要卡點判斷", `主要卡點是「${scenario.main}」，次要卡點是「${scenario.secondary}」。`],
-    ["三、建議測試方法", `建議先測：${scenario.methods.join("、")}。`],
-    ["四、追蹤指標", `報名 ${kpi.signups}、到場率 ${pct(kpi.arrival)}、問卷完成率 ${pct(kpi.survey)}、測驗意願率 ${pct(kpi.intent)}。`],
+    ["二、主要卡點判斷", `依目前參數重算後，主要卡點是「${strongest.label}」，次要卡點是「${strongest.second}」。`],
+    ["三、建議測試方法", `建議先測：${[goalModifiers[goalSelect.value].method, ...scenario.methods].slice(0, 3).join("、")}。`],
+    ["四、追蹤指標", `報名 ${kpi.signups}、到場率 ${pct(kpi.arrival)}、問卷完成率 ${pct(kpi.survey)}、測驗意願率 ${pct(kpi.intent)}、顧問跟進 ${kpi.followups} 人。`],
     ["五、下一步建議", "先做小範圍驗證，再依資料判讀決定是否擴大，不以短期營收承諾作為提案主軸。"],
   ];
   reportBlocks.innerHTML = blocks.map(([title, body]) => `<div class="report-block"><strong>${title}</strong><span>${body}</span></div>`).join("");
@@ -365,9 +637,10 @@ function renderReport() {
 
 function renderExecutionSummary() {
   const scenario = scenarioData[activeScenario];
+  const strongest = strongestBottleneck();
   howList.innerHTML = [
     "先選一個明確情境與目標族群。",
-    "用問卷或小型活動收集卡點與意願資料。",
+    `用問卷或小型活動驗證「${strongest.label}」是否真的是主要卡點。`,
     "用 Dashboard 判斷哪個主題、說法與活動入口值得擴大。",
     "把結果轉成顧問行動清單與下一輪測試。",
   ]
@@ -382,19 +655,24 @@ function renderExecutionSummary() {
     .map((item) => `<li>${item}</li>`)
     .join("");
   staffList.innerHTML = manpowerBase[scaleSelect.value]
-    .map(([role, hours]) => `<div class="staff-row"><strong>${role}</strong><span>${hours}h</span></div>`)
+    .map(([role, hours]) => {
+      const extra = goalSelect.value === "followup" && role.includes("顧問") ? 8 : listSelect.value === "none" && role.includes("Dashboard") ? 6 : 0;
+      return `<div class="staff-row"><strong>${role}</strong><span>${hours + extra}h</span></div>`;
+    })
     .join("");
 }
 
 function reportText() {
   const scenario = scenarioData[activeScenario];
   const kpi = adjustedKpis();
+  const strongest = strongestBottleneck();
   return [
     "多益推進方法學模擬摘要",
     `情境：${scenario.label}`,
-    `主要卡點：${scenario.main}`,
-    `建議方法：${scenario.methods.join("、")}`,
-    `模擬 KPI：報名 ${kpi.signups}、到場率 ${pct(kpi.arrival)}、問卷完成率 ${pct(kpi.survey)}、測驗意願率 ${pct(kpi.intent)}`,
+    `主要卡點：${strongest.label}`,
+    `圖表視角：${viewSelect.options[viewSelect.selectedIndex].text}`,
+    `建議方法：${[goalModifiers[goalSelect.value].method, ...scenario.methods].slice(0, 3).join("、")}`,
+    `模擬 KPI：報名 ${kpi.signups}、到場率 ${pct(kpi.arrival)}、問卷完成率 ${pct(kpi.survey)}、測驗意願率 ${pct(kpi.intent)}、顧問跟進 ${kpi.followups} 人`,
     "下一步：先做小範圍方法學驗證，再依資料結果決定是否擴大。",
   ].join("\n");
 }
@@ -414,6 +692,7 @@ function renderAll() {
   renderSetup();
   renderDiagnosis();
   renderKpis();
+  renderChartTitles();
   renderFunnel();
   renderTopicChart();
   renderDonut();
