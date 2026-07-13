@@ -360,6 +360,11 @@ const reportDocumentTitle = document.querySelector("#reportDocumentTitle");
 const reportGeneratedAt = document.querySelector("#reportGeneratedAt");
 const reportClosingText = document.querySelector("#reportClosingText");
 const reportMetrics = document.querySelector("#reportMetrics");
+const reportDataCards = document.querySelector("#reportDataCards");
+const reportFunnelVisual = document.querySelector("#reportFunnelVisual");
+const reportBottleneckVisual = document.querySelector("#reportBottleneckVisual");
+const reportMethodVisual = document.querySelector("#reportMethodVisual");
+const reportRateVisual = document.querySelector("#reportRateVisual");
 const campusTargetSelect = document.querySelector("#campusTargetSelect");
 const campusGoalSelect = document.querySelector("#campusGoalSelect");
 const campusInputSummary = document.querySelector("#campusInputSummary");
@@ -1080,6 +1085,88 @@ function reportBlock(title, body, icon, tags = []) {
   `;
 }
 
+function renderReportVisuals(report) {
+  const bottlenecks = adjustedBottlenecks();
+  const methods = recommendedMethodRows();
+  const funnel = [
+    ["觸及", report.reach],
+    ["報名", report.signups],
+    ["到場", report.arrived],
+    ["問卷", report.completed],
+    ["意願", report.interested],
+    ["跟進", report.followups],
+  ];
+  const maxFunnel = Math.max(report.reach, 1);
+  const bottleneckLabels = {
+    awareness: "認知",
+    motivation: "動機",
+    execution: "行動",
+    conversion: "轉換",
+    retention: "回流",
+  };
+  const rateRows = [
+    ["到場率", report.arrivalRate],
+    ["問卷完成", report.surveyRate],
+    ["測驗意願", report.intentRate],
+    ["顧問跟進", report.followupRate],
+  ];
+  reportDataCards.innerHTML = [
+    ["預估觸及", report.reach.toLocaleString("zh-TW"), "曝光與渠道整合"],
+    ["報名人數", report.signups.toLocaleString("zh-TW"), "活動入口轉換"],
+    ["測驗意願", report.interested.toLocaleString("zh-TW"), "後續轉換名單"],
+    ["跟進名單", report.followups.toLocaleString("zh-TW"), "顧問行動池"],
+  ]
+    .map(([label, value, note]) => `<div class="report-data-card"><span>${label}</span><strong>${value}</strong><span>${note}</span></div>`)
+    .join("");
+  reportFunnelVisual.innerHTML = `
+    ${funnel
+      .map(
+        ([label, value]) => `
+          <div class="report-mini-row">
+            <strong>${label}</strong>
+            <div class="report-mini-track"><div class="report-mini-fill" style="width:${(value / maxFunnel) * 100}%"></div></div>
+            <span>${Math.round(value).toLocaleString("zh-TW")}</span>
+          </div>
+        `,
+      )
+      .join("")}
+    <p class="report-data-note">從觸及到顧問跟進的每一步都可被記錄，便於判斷是訊息、活動、問卷或後續流程出現流失。</p>
+  `;
+  reportBottleneckVisual.innerHTML = Object.entries(bottlenecks)
+    .map(
+      ([key, value]) => `
+        <div class="report-mini-row">
+          <strong>${bottleneckLabels[key]}</strong>
+          <div class="report-mini-track"><div class="report-bottleneck-fill" style="width:${value * 10}%"></div></div>
+          <span>${value.toFixed(1)}</span>
+        </div>
+      `,
+    )
+    .join("");
+  reportMethodVisual.innerHTML = methods
+    .map(
+      (method, index) => `
+        <div class="report-method-row">
+          <span class="report-method-rank">${index + 1}</span>
+          <strong>${method.name}</strong>
+          <span>${method.rankScore.toFixed(1)} 分</span>
+        </div>
+      `,
+    )
+    .join("");
+  reportRateVisual.innerHTML = rateRows
+    .map(
+      ([label, value]) => `
+        <div class="report-rate-row">
+          <strong>${label}</strong>
+          <div class="report-rate-track"><div class="report-rate-fill" style="width:${clamp(value * 100, 0, 100)}%"></div></div>
+          <span>${pct(value)}</span>
+        </div>
+      `,
+    )
+    .join("");
+}
+
 function renderReport() {
   const scenario = scenarioData[activeScenario];
   const strongest = strongestBottleneck();
@@ -1087,6 +1174,7 @@ function renderReport() {
   const report = currentReportData();
   reportDocumentTitle.textContent = report.title;
   reportGeneratedAt.textContent = `產出時間：${new Date().toLocaleString("zh-TW", { hour12: false })}`;
+  renderReportVisuals(report);
   const blocks = [
     reportBlock(
       "一、情境摘要",
@@ -1195,16 +1283,19 @@ function reportHtmlDocument() {
         <style>
           body { font-family: "Noto Sans TC", Arial, sans-serif; color: #172033; line-height: 1.6; }
           h1 { font-size: 28px; }
-          .block { border: 1px solid #dbe4ef; padding: 14px; margin: 10px 0; }
+          .report-data-cards, .report-chart-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+          .report-data-card, .report-chart-grid article, .report-block { border: 1px solid #dbe4ef; padding: 14px; margin: 10px 0; }
+          .report-mini-row, .report-rate-row, .report-method-row { margin: 8px 0; }
+          .report-mini-track, .report-rate-track { height: 12px; background: #e7edf5; }
+          .report-mini-fill, .report-rate-fill { height: 12px; background: #1f6fd1; }
+          .report-bottleneck-fill { height: 12px; background: #e87817; }
           .meta { color: #627085; }
         </style>
       </head>
       <body>
         <h1>${currentReportData().title}</h1>
         <p class="meta">${reportGeneratedAt.textContent}</p>
-        ${Array.from(reportBlocks.querySelectorAll(".report-block"))
-          .map((block) => `<div class="block">${block.innerText.replace(/\n/g, "<br>")}</div>`)
-          .join("")}
+        ${reportDocument.innerHTML}
       </body>
     </html>
   `;
