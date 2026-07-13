@@ -340,6 +340,26 @@ const copyReport = document.querySelector("#copyReport");
 const downloadSummary = document.querySelector("#downloadSummary");
 const startSimulation = document.querySelector("#startSimulation");
 const biDashboardLink = document.querySelector("#biDashboardLink");
+const reportTitleInput = document.querySelector("#reportTitleInput");
+const reportAudienceInput = document.querySelector("#reportAudienceInput");
+const reportReachInput = document.querySelector("#reportReachInput");
+const reportSignupInput = document.querySelector("#reportSignupInput");
+const reportArrivalInput = document.querySelector("#reportArrivalInput");
+const reportSurveyInput = document.querySelector("#reportSurveyInput");
+const reportIntentInput = document.querySelector("#reportIntentInput");
+const reportFollowupInput = document.querySelector("#reportFollowupInput");
+const reportBudgetInput = document.querySelector("#reportBudgetInput");
+const reportNotesInput = document.querySelector("#reportNotesInput");
+const applyReportData = document.querySelector("#applyReportData");
+const resetReportData = document.querySelector("#resetReportData");
+const downloadPdf = document.querySelector("#downloadPdf");
+const exportWord = document.querySelector("#exportWord");
+const shareReport = document.querySelector("#shareReport");
+const reportDocument = document.querySelector("#reportDocument");
+const reportDocumentTitle = document.querySelector("#reportDocumentTitle");
+const reportGeneratedAt = document.querySelector("#reportGeneratedAt");
+const reportClosingText = document.querySelector("#reportClosingText");
+const reportMetrics = document.querySelector("#reportMetrics");
 const campusTargetSelect = document.querySelector("#campusTargetSelect");
 const campusGoalSelect = document.querySelector("#campusGoalSelect");
 const campusInputSummary = document.querySelector("#campusInputSummary");
@@ -1013,19 +1033,107 @@ function renderInsights() {
   insights.innerHTML = items.map(([title, body]) => `<div class="insight"><strong>${title}</strong><span>${body}</span></div>`).join("");
 }
 
-function renderReport() {
+function reportNumber(input, fallback) {
+  const value = Number(input.value);
+  return Number.isFinite(value) && input.value !== "" ? Math.max(value, 0) : fallback;
+}
+
+function currentReportData() {
   const scenario = scenarioData[activeScenario];
   const kpi = adjustedKpis();
+  const signups = reportNumber(reportSignupInput, kpi.signups);
+  const arrived = reportNumber(reportArrivalInput, kpi.arrived);
+  const completed = reportNumber(reportSurveyInput, kpi.completed);
+  const interested = reportNumber(reportIntentInput, kpi.interested);
+  const followups = reportNumber(reportFollowupInput, kpi.followups);
+  const reach = reportNumber(reportReachInput, Math.round(signups * 4.8));
+  const budget = reportNumber(reportBudgetInput, 0);
+  return {
+    title: reportTitleInput.value.trim() || "校園推廣模擬分析報告",
+    audience: reportAudienceInput.value.trim() || `${targetSelect.options[targetSelect.selectedIndex].text} / ${scenario.label}`,
+    notes: reportNotesInput.value.trim(),
+    reach,
+    signups,
+    arrived,
+    completed,
+    interested,
+    followups,
+    budget,
+    arrivalRate: signups ? arrived / signups : 0,
+    surveyRate: arrived ? completed / arrived : 0,
+    intentRate: completed ? interested / completed : 0,
+    followupRate: interested ? followups / interested : 0,
+    costPerInterested: budget && interested ? budget / interested : 0,
+  };
+}
+
+function reportBlock(title, body, icon, tags = []) {
+  return `
+    <div class="report-block">
+      <span class="report-icon">${icon}</span>
+      <div>
+        <strong>${title}</strong>
+        <span>${body}</span>
+        ${tags.length ? `<div class="report-tags">${tags.map((tag) => `<span>${tag}</span>`).join("")}</div>` : ""}
+      </div>
+    </div>
+  `;
+}
+
+function renderReport() {
+  const scenario = scenarioData[activeScenario];
   const strongest = strongestBottleneck();
   const recommendations = recommendedMethodRows().map((method) => method.name);
+  const report = currentReportData();
+  reportDocumentTitle.textContent = report.title;
+  reportGeneratedAt.textContent = `產出時間：${new Date().toLocaleString("zh-TW", { hour12: false })}`;
   const blocks = [
-    ["一、情境摘要", `目前模擬情境為「${scenario.label}」，推廣對象為 ${targetSelect.options[targetSelect.selectedIndex].text}。`],
-    ["二、主要卡點判斷", `依目前參數重算後，主要卡點是「${strongest.label}」，次要卡點是「${strongest.second}」。`],
-    ["三、建議測試方法", `建議先測：${recommendations.join("、")}。`],
-    ["四、追蹤指標", `報名 ${kpi.signups}、到場率 ${pct(kpi.arrival)}、問卷完成率 ${pct(kpi.survey)}、測驗意願率 ${pct(kpi.intent)}、顧問跟進 ${kpi.followups} 人。`],
-    ["五、下一步建議", "先做小範圍驗證，再依資料判讀決定是否擴大，不以短期營收承諾作為提案主軸。"],
+    reportBlock(
+      "一、情境摘要",
+      `本次報告情境為「${scenario.label}」，推廣對象為 ${report.audience}。預估觸及 ${report.reach.toLocaleString("zh-TW")} 人，報名 ${report.signups.toLocaleString("zh-TW")} 人。`,
+      "學",
+    ),
+    reportBlock(
+      "二、主要卡點判斷",
+      `系統判斷主要卡點為「${strongest.label}」，次要卡點為「${strongest.second}」。目前更適合先驗證推廣訊息、參與門檻與後續轉換設計。`,
+      "!",
+      [strongest.label, strongest.second],
+    ),
+    reportBlock(
+      "三、建議測試方法",
+      `建議先測 ${recommendations.join("、")}，用小規模活動觀察學生是否願意點擊、到場、完成問卷並進一步了解測驗。`,
+      "測",
+      recommendations,
+    ),
+    reportBlock(
+      "四、建議追蹤指標",
+      `到場率 ${pct(report.arrivalRate)}、問卷完成率 ${pct(report.surveyRate)}、測驗意願率 ${pct(report.intentRate)}、顧問跟進率 ${pct(report.followupRate)}。`,
+      "圖",
+      ["報名轉換率", "出席率", "後測進步率"],
+    ),
+    reportBlock(
+      "五、下一步建議",
+      `${report.notes || "先以 2-4 週小範圍測試建立證據，再依數據判讀調整訊息、渠道與方法組合。"}${report.costPerInterested ? ` 目前每位意願名單成本約 ${Math.round(report.costPerInterested).toLocaleString("zh-TW")} 元。` : ""}`,
+      "→",
+      ["2-4 週測試", "優化調整", "評估擴大"],
+    ),
   ];
-  reportBlocks.innerHTML = blocks.map(([title, body]) => `<div class="report-block"><strong>${title}</strong><span>${body}</span></div>`).join("");
+  reportBlocks.innerHTML = blocks.join("");
+  reportClosingText.textContent = "先從小範圍情境驗證開始，再依資料判讀決定是否擴大。";
+  reportMetrics.innerHTML = [
+    ["眼", report.reach.toLocaleString("zh-TW"), "預估觸及人數"],
+    ["人", report.signups.toLocaleString("zh-TW"), "預估報名人數"],
+    ["盃", pct(report.intentRate), "預估後測進步率"],
+  ]
+    .map(
+      ([icon, value, label]) => `
+        <div class="metric-card">
+          <span class="metric-icon">${icon}</span>
+          <div><strong>${value}</strong><span>${label}</span></div>
+        </div>
+      `,
+    )
+    .join("");
 }
 
 function renderExecutionSummary() {
@@ -1058,22 +1166,52 @@ function renderExecutionSummary() {
 
 function reportText() {
   const scenario = scenarioData[activeScenario];
-  const kpi = adjustedKpis();
   const strongest = strongestBottleneck();
   const recommendations = recommendedMethodRows().map((method) => method.name);
+  const report = currentReportData();
   return [
-    "多益推進方法學模擬摘要",
+    report.title,
     `情境：${scenario.label}`,
+    `推廣對象：${report.audience}`,
     `主要卡點：${strongest.label}`,
     `圖表視角：${viewSelect.options[viewSelect.selectedIndex].text}`,
     `建議方法：${recommendations.join("、")}`,
-    `模擬 KPI：報名 ${kpi.signups}、到場率 ${pct(kpi.arrival)}、問卷完成率 ${pct(kpi.survey)}、測驗意願率 ${pct(kpi.intent)}、顧問跟進 ${kpi.followups} 人`,
+    `輸入 / 模擬 KPI：觸及 ${report.reach}、報名 ${report.signups}、到場 ${report.arrived}、問卷完成 ${report.completed}、測驗意願 ${report.interested}、顧問跟進 ${report.followups} 人`,
+    `關鍵比率：到場率 ${pct(report.arrivalRate)}、問卷完成率 ${pct(report.surveyRate)}、測驗意願率 ${pct(report.intentRate)}、顧問跟進率 ${pct(report.followupRate)}`,
+    report.notes ? `補充觀察：${report.notes}` : "",
     "下一步：先做小範圍方法學驗證，再依資料結果決定是否擴大。",
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
-function download(filename, text) {
-  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+function reportHtmlDocument() {
+  return `
+    <!doctype html>
+    <html lang="zh-Hant">
+      <head>
+        <meta charset="utf-8" />
+        <title>${currentReportData().title}</title>
+        <style>
+          body { font-family: "Noto Sans TC", Arial, sans-serif; color: #172033; line-height: 1.6; }
+          h1 { font-size: 28px; }
+          .block { border: 1px solid #dbe4ef; padding: 14px; margin: 10px 0; }
+          .meta { color: #627085; }
+        </style>
+      </head>
+      <body>
+        <h1>${currentReportData().title}</h1>
+        <p class="meta">${reportGeneratedAt.textContent}</p>
+        ${Array.from(reportBlocks.querySelectorAll(".report-block"))
+          .map((block) => `<div class="block">${block.innerText.replace(/\n/g, "<br>")}</div>`)
+          .join("")}
+      </body>
+    </html>
+  `;
+}
+
+function download(filename, text, type = "text/plain;charset=utf-8") {
+  const blob = new Blob([text], { type });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
@@ -1162,6 +1300,43 @@ copyReport.addEventListener("click", async () => {
 });
 
 downloadSummary.addEventListener("click", () => download("toeic-method-simulator-summary.txt", reportText()));
+downloadPdf.addEventListener("click", () => window.print());
+exportWord.addEventListener("click", () => download("toeic-method-simulator-report.doc", reportHtmlDocument(), "application/msword;charset=utf-8"));
+shareReport.addEventListener("click", async () => {
+  const shareData = {
+    title: currentReportData().title,
+    text: reportText(),
+  };
+  try {
+    if (navigator.share) await navigator.share(shareData);
+    else await navigator.clipboard.writeText(reportText());
+    shareReport.textContent = navigator.share ? "已分享" : "已複製";
+  } catch {
+    download("toeic-method-simulator-report.txt", reportText());
+    shareReport.textContent = "已下載";
+  }
+  setTimeout(() => {
+    shareReport.textContent = "分享給團隊";
+  }, 1200);
+});
+applyReportData.addEventListener("click", renderAll);
+resetReportData.addEventListener("click", () => {
+  [
+    reportTitleInput,
+    reportAudienceInput,
+    reportReachInput,
+    reportSignupInput,
+    reportArrivalInput,
+    reportSurveyInput,
+    reportIntentInput,
+    reportFollowupInput,
+    reportBudgetInput,
+    reportNotesInput,
+  ].forEach((input) => {
+    input.value = "";
+  });
+  renderAll();
+});
 startSimulation.addEventListener("click", () => document.querySelector("#scenario").scrollIntoView({ behavior: "smooth" }));
 saveCampusDraft.addEventListener("click", () => {
   saveCampusDraft.textContent = "已儲存";

@@ -325,11 +325,94 @@
             <div class="panel-head">
               <div>
                 <p class="eyebrow">Report Output</p>
-                <h2>模擬分析報告摘要</h2>
+                <h2>校園推廣模擬分析報告</h2>
+                <p>可輸入實際活動數據，產出可列印成 PDF、匯出、複製與分享的決策報告。</p>
               </div>
-              <button id="copyReport" type="button">複製摘要</button>
+              <span class="pill">PDF-ready</span>
             </div>
-            <div class="report-blocks" id="reportBlocks"></div>
+
+            <article class="report-input-panel">
+              <div>
+                <p class="eyebrow">Data Input</p>
+                <h3>報告資料輸入</h3>
+              </div>
+              <div class="report-input-grid">
+                <label>
+                  報告標題
+                  <input id="reportTitleInput" type="text" placeholder="校園推廣模擬分析報告" />
+                </label>
+                <label>
+                  推廣對象 / 場域
+                  <input id="reportAudienceInput" type="text" placeholder="大學生 / 校園推廣" />
+                </label>
+                <label>
+                  預估觸及人數
+                  <input id="reportReachInput" type="number" min="0" placeholder="由系統估算" />
+                </label>
+                <label>
+                  報名人數
+                  <input id="reportSignupInput" type="number" min="0" placeholder="由系統估算" />
+                </label>
+                <label>
+                  到場人數
+                  <input id="reportArrivalInput" type="number" min="0" placeholder="由系統估算" />
+                </label>
+                <label>
+                  問卷完成數
+                  <input id="reportSurveyInput" type="number" min="0" placeholder="由系統估算" />
+                </label>
+                <label>
+                  測驗意願人數
+                  <input id="reportIntentInput" type="number" min="0" placeholder="由系統估算" />
+                </label>
+                <label>
+                  顧問跟進人數
+                  <input id="reportFollowupInput" type="number" min="0" placeholder="由系統估算" />
+                </label>
+                <label>
+                  活動預算
+                  <input id="reportBudgetInput" type="number" min="0" placeholder="可選填" />
+                </label>
+                <label class="wide-field">
+                  補充觀察
+                  <textarea id="reportNotesInput" rows="3" placeholder="例如：社團轉發成效較好、職涯主題比單純考試資訊更吸引學生。"></textarea>
+                </label>
+              </div>
+              <div class="report-input-actions">
+                <button id="applyReportData" type="button">套用資料產出報告</button>
+                <button id="resetReportData" type="button">重置輸入</button>
+              </div>
+            </article>
+
+            <div class="report-output-layout">
+              <article class="report-document" id="reportDocument">
+                <div class="report-document-head">
+                  <div>
+                    <p class="eyebrow">Analysis Report</p>
+                    <h2 id="reportDocumentTitle">校園推廣模擬分析報告</h2>
+                    <p>此為系統 Demo 產出的示意報告，可做為後續顧問討論與決策依據。</p>
+                  </div>
+                  <span id="reportGeneratedAt"></span>
+                </div>
+                <div class="report-blocks" id="reportBlocks"></div>
+                <div class="report-closing">
+                  <strong>重點</strong>
+                  <span id="reportClosingText">先從小範圍情境驗證開始，再依資料判讀決定是否擴大。</span>
+                </div>
+              </article>
+
+              <aside class="report-side-panel">
+                <div class="export-card">
+                  <p class="eyebrow">Export & Share</p>
+                  <h3>匯出與分享</h3>
+                  <button id="copyReport" type="button">複製摘要</button>
+                  <button id="downloadPdf" type="button">下載 PDF</button>
+                  <button id="exportWord" type="button">匯出 Word</button>
+                  <button id="shareReport" type="button">分享給團隊</button>
+                </div>
+                <div class="report-metrics" id="reportMetrics"></div>
+              </aside>
+            </div>
           </section>
 
           <section class="panel final-panel" id="summary">
