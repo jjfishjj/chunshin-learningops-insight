@@ -31,6 +31,9 @@ This is a portfolio-ready static prototype, not a production integration. It use
 - `brand-dashboard.html` - GoPro / 法鉑 lifestyle brand analytics dashboard for proxy brand marketing and operations
 - `brand-dashboard.css` - lifestyle brand BI dashboard visual system
 - `brand-dashboard.js` - mock brand data, channel analysis, cross-sell, inventory, and decision logic
+- `toeic-pal-report.html` - TOEIC Pal retention dashboard and learner-facing English ability report demo
+- `toeic-pal-report.css` - TOEIC Pal report visual system
+- `toeic-pal-report.js` - retention cohort, conversion funnel, ability persona, and learning prescription logic
 - `toeic-methodology.html` - revised methodology-first demo based on the partner optimization brief
 - `toeic-methodology.css` - visual system for the TOEIC learning conversion methodology demo
 - `toeic-methodology.js` - validation-topic selector and readiness checklist logic
@@ -48,6 +51,7 @@ This is a portfolio-ready static prototype, not a production integration. It use
 - Main proposal: `https://jjfishjj.github.io/chunshin-learningops-insight/`
 - BI dashboard: `https://jjfishjj.github.io/chunshin-learningops-insight/bi-dashboard.html`
 - Lifestyle brand dashboard: `https://jjfishjj.github.io/chunshin-learningops-insight/brand-dashboard.html`
+- TOEIC Pal retention and ability report: `https://jjfishjj.github.io/chunshin-learningops-insight/toeic-pal-report.html`
 - TOEIC methodology: `https://jjfishjj.github.io/chunshin-learningops-insight/toeic-methodology.html`
 - Method simulator dashboard: `https://jjfishjj.github.io/chunshin-learningops-insight/method-simulator-dashboard.html`
 

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TOEIC Pal Retention & Ability Report Demo</title>
+    <link rel="stylesheet" href="./toeic-pal-report.css" />
+  </head>
+  <body>
+    <header class="report-hero">
+      <div>
+        <p class="eyebrow">TOEIC Pal Growth System</p>
+        <h1>App 留存數據報表與英語力報告</h1>
+        <p class="lede">
+          把 TOEIC Pal 從題庫工具升級為可追蹤學習、預測報名、生成有趣能力報告的成長系統 Demo。
+        </p>
+      </div>
+      <div class="hero-actions">
+        <a href="./index.html">主頁提案</a>
+        <a href="./method-simulator-dashboard.html">方法學模擬器</a>
+        <button id="printReport" type="button">輸出 PDF</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="control-panel" aria-label="TOEIC Pal report controls">
+        <label>
+          App 用戶分群
+          <select id="segmentSelect">
+            <option value="career">求職衝刺型</option>
+            <option value="campus">校園活動型</option>
+            <option value="self">自學備考型</option>
+            <option value="lowConfidence">低信心起步型</option>
+          </select>
+        </label>
+        <label>
+          來源渠道
+          <select id="sourceSelect">
+            <option value="campus">校園講座</option>
+            <option value="organic">自然下載</option>
+            <option value="advisor">顧問推薦</option>
+            <option value="social">社群內容</option>
+          </select>
+        </label>
+        <label>
+          考前週期
+          <select id="examWindowSelect">
+            <option value="short">考前 14 天</option>
+            <option value="mid">考前 30 天</option>
+            <option value="long">考前 60 天</option>
+          </select>
+        </label>
+        <label>
+          TOEIC 分數
+          <input id="scoreInput" type="number" min="10" max="990" step="5" value="620" />
+        </label>
+        <label>
+          目標情境
+          <select id="goalSelect">
+            <option value="job">求職 / 履歷</option>
+            <option value="graduate">畢業門檻</option>
+            <option value="global">外商 / 國際職場</option>
+            <option value="study">交換 / 留學準備</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="kpi-grid" id="appKpis" aria-live="polite"></section>
+
+      <section class="dashboard-layout">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Retention Model</p>
+              <h2>TOEIC Pal 留存與學習健康度</h2>
+            </div>
+            <span class="pill">Mock Cohort</span>
+          </div>
+          <div class="retention-grid" id="retentionGrid"></div>
+        </article>
+
+        <aside class="panel">
+          <p class="eyebrow">Next Best Action</p>
+          <h2>下一步推薦</h2>
+          <div class="action-list" id="actionList"></div>
+        </aside>
+      </section>
+
+      <section class="dashboard-layout">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Conversion Funnel</p>
+              <h2>從安裝到正式報名</h2>
+            </div>
+            <span class="pill">Exam Intent</span>
+          </div>
+          <div class="funnel-chart" id="appFunnel"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Risk Segments</p>
+              <h2>流失風險與顧問介入</h2>
+            </div>
+            <span class="pill">CRM-ready</span>
+          </div>
+          <div class="risk-table" id="riskTable"></div>
+        </article>
+      </section>
+
+      <section class="ability-report" id="abilityReport">
+        <div class="panel-head">
+          <div>
+            <p class="eyebrow">English Ability Report</p>
+            <h2>讓考生想看的英語力報告</h2>
+            <p>把 TOEIC 分數轉成英語力 DNA、職場任務、同儕比較與下一步學習處方。</p>
+          </div>
+          <button id="copyReport" type="button">複製報告摘要</button>
+        </div>
+
+        <div class="ability-layout">
+          <article class="ability-card main-card">
+            <p class="eyebrow">Ability Persona</p>
+            <h3 id="personaTitle">職場會議觀察者</h3>
+            <p id="personaDescription"></p>
+            <div class="score-band">
+              <span>目前分數</span>
+              <strong id="scoreDisplay">620</strong>
+              <span id="scoreBandLabel">CEFR B1-B2 區間</span>
+            </div>
+          </article>
+
+          <article class="ability-card">
+            <p class="eyebrow">Peer Benchmark</p>
+            <h3>同齡族群比較</h3>
+            <div class="benchmark" id="benchmark"></div>
+          </article>
+        </div>
+
+        <div class="ability-layout">
+          <article class="ability-card">
+            <p class="eyebrow">English DNA</p>
+            <h3>能力雷達條</h3>
+            <div class="dna-bars" id="dnaBars"></div>
+          </article>
+
+          <article class="ability-card">
+            <p class="eyebrow">Workplace Unlock</p>
+            <h3>職場任務解鎖</h3>
+            <div class="unlock-grid" id="unlockGrid"></div>
+          </article>
+        </div>
+
+        <section class="panel prescription-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Learning Prescription</p>
+              <h2>下一步學習處方</h2>
+            </div>
+            <span class="pill">7 / 14 / 21 days</span>
+          </div>
+          <div class="task-grid" id="taskGrid"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="./toeic-pal-report.js"></script>
+  </body>
+</html>
