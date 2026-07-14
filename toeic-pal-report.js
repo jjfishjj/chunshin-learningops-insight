@@ -53,6 +53,57 @@ const goalText = {
   study: "交換 / 留學準備",
 };
 
+const roleTiers = [
+  {
+    min: 900,
+    next: 990,
+    title: "全球任務指揮官",
+    token: "GCD",
+    band: "CEFR C1 區間",
+    desc: "你已接近高階職場英文角色，適合挑戰簡報、談判、S&W 與跨國協作任務。",
+  },
+  {
+    min: 860,
+    next: 900,
+    title: "國際職場協作者",
+    token: "GLO",
+    band: "CEFR B2-C1 區間",
+    desc: "你已能處理多數職場英文任務，下一步應該轉向口說、寫作與真實工作輸出。",
+  },
+  {
+    min: 730,
+    next: 860,
+    title: "外商履歷衝刺者",
+    token: "CV+",
+    band: "CEFR B2 區間",
+    desc: "你具備進入國際職場的基礎，適合把能力包裝成履歷、面試與職務情境。",
+  },
+  {
+    min: 550,
+    next: 730,
+    title: "職場會議觀察者",
+    token: "MTG",
+    band: "CEFR B1-B2 區間",
+    desc: "你能理解常見商務情境，但仍需要提升閱讀耐力與快速聽力反應。",
+  },
+  {
+    min: 350,
+    next: 550,
+    title: "英文信心建立者",
+    token: "UP",
+    band: "CEFR A2-B1 區間",
+    desc: "你已經有起步基礎，適合用短任務建立信心，不要一開始就被長篇閱讀壓垮。",
+  },
+  {
+    min: 0,
+    next: 350,
+    title: "新手探索者",
+    token: "NEW",
+    band: "CEFR A1-A2 區間",
+    desc: "你需要更小單位的任務和即時回饋，先建立每日練習習慣會比追分更重要。",
+  },
+];
+
 const segmentSelect = document.querySelector("#segmentSelect");
 const sourceSelect = document.querySelector("#sourceSelect");
 const examWindowSelect = document.querySelector("#examWindowSelect");
@@ -65,12 +116,19 @@ const appFunnel = document.querySelector("#appFunnel");
 const riskTable = document.querySelector("#riskTable");
 const personaTitle = document.querySelector("#personaTitle");
 const personaDescription = document.querySelector("#personaDescription");
+const avatarToken = document.querySelector("#avatarToken");
 const scoreDisplay = document.querySelector("#scoreDisplay");
+const levelDisplay = document.querySelector("#levelDisplay");
 const scoreBandLabel = document.querySelector("#scoreBandLabel");
+const xpLabel = document.querySelector("#xpLabel");
+const nextLevelText = document.querySelector("#nextLevelText");
+const xpFill = document.querySelector("#xpFill");
 const benchmark = document.querySelector("#benchmark");
+const roleGrid = document.querySelector("#roleGrid");
 const dnaBars = document.querySelector("#dnaBars");
 const unlockGrid = document.querySelector("#unlockGrid");
 const taskGrid = document.querySelector("#taskGrid");
+const badgeGrid = document.querySelector("#badgeGrid");
 const copyReport = document.querySelector("#copyReport");
 const printReport = document.querySelector("#printReport");
 
@@ -107,15 +165,14 @@ function currentAbility() {
   const inference = clamp(25 + score * 0.058, 5, 98);
   const workplace = clamp(30 + score * 0.06 + (goalSelect.value === "job" ? 6 : 0), 5, 98);
   const percentile = clamp(Math.round((score - 250) / 7.2), 8, 96);
-  return { score, listen, vocab, reading, grammar, inference, workplace, percentile };
+  const level = Math.max(1, Math.floor(score / 35));
+  const xp = Math.round(((score % 100) / 100) * 100);
+  return { score, listen, vocab, reading, grammar, inference, workplace, percentile, level, xp };
 }
 
 function personaFor(score) {
-  if (score >= 860) return ["國際職場溝通者", "你已能處理多數職場英文任務，下一步應該轉向口說、寫作與真實工作輸出。", "CEFR B2-C1 區間"];
-  if (score >= 730) return ["外商履歷衝刺者", "你具備進入國際職場的基礎，適合把能力包裝成履歷、面試與職務情境。", "CEFR B2 區間"];
-  if (score >= 550) return ["職場會議觀察者", "你能理解常見商務情境，但仍需要提升閱讀耐力與快速聽力反應。", "CEFR B1-B2 區間"];
-  if (score >= 350) return ["英文信心建立者", "你已經有起步基礎，適合用短任務建立信心，不要一開始就被長篇閱讀壓垮。", "CEFR A2-B1 區間"];
-  return ["低壓力起步者", "你需要更小單位的任務和即時回饋，先建立每日練習習慣會比追分更重要。", "CEFR A1-A2 區間"];
+  const role = roleTiers.find((tier) => score >= tier.min) || roleTiers[roleTiers.length - 1];
+  return [role.title, role.token, role.desc, role.band, role.next];
 }
 
 function renderAppKpis(model) {
@@ -199,11 +256,16 @@ function renderRisk(model) {
 }
 
 function renderAbility(ability, model) {
-  const [title, desc, band] = personaFor(ability.score);
+  const [title, token, desc, band, nextThreshold] = personaFor(ability.score);
   personaTitle.textContent = title;
+  avatarToken.textContent = token;
   personaDescription.textContent = `${desc} ${model.segment.personaBias}`;
   scoreDisplay.textContent = ability.score;
+  levelDisplay.textContent = `Lv. ${ability.level}`;
   scoreBandLabel.textContent = band;
+  xpLabel.textContent = `XP ${ability.xp} / 100`;
+  xpFill.style.width = `${ability.xp}%`;
+  nextLevelText.textContent = ability.score >= 990 ? "已達目前最高階角色" : `距離下一角色還需要 ${Math.max(nextThreshold - ability.score, 0)} 分`;
   benchmark.innerHTML = `
     <div class="benchmark-row">
       <strong>同齡百分位</strong>
@@ -213,12 +275,12 @@ function renderAbility(ability, model) {
     <p>你的整體英語力高於模擬同齡族群 ${ability.percentile}% 的學習者。這個比較可作為報告分享與顧問討論入口。</p>
   `;
   const dna = [
-    ["聽力反應", ability.listen],
-    ["商務單字", ability.vocab],
-    ["閱讀耐力", ability.reading],
-    ["文法穩定", ability.grammar],
-    ["推論理解", ability.inference],
-    ["職場應用", ability.workplace],
+    ["聽力反應 SPEED", ability.listen],
+    ["商務單字 POWER", ability.vocab],
+    ["閱讀耐力 STAMINA", ability.reading],
+    ["文法穩定 DEFENSE", ability.grammar],
+    ["推論理解 INSIGHT", ability.inference],
+    ["職場應用 QUEST", ability.workplace],
   ];
   dnaBars.innerHTML = dna
     .map(
@@ -232,17 +294,44 @@ function renderAbility(ability, model) {
     )
     .join("");
   const unlocks = [
-    ["讀懂基礎 email", 350, "能掌握常見通知、短訊息與簡單職場往來。"],
-    ["理解會議大意", 550, "能理解會議主題、任務分派與常見商務對話。"],
-    ["處理英文履歷", 650, "可把英文能力轉成履歷與面試素材。"],
-    ["閱讀商務文件", 730, "能處理較長文件、專案摘要與跨部門溝通內容。"],
-    ["外商面試準備", 800, "適合銜接口說、寫作與情境演練。"],
-    ["國際職場輸出", 860, "可往簡報、談判、跨國協作與 S&W 方向延伸。"],
+    ["Lv. 10 基礎 email", 350, "能掌握常見通知、短訊息與簡單職場往來。"],
+    ["Lv. 16 會議大意", 550, "能理解會議主題、任務分派與常見商務對話。"],
+    ["Lv. 19 英文履歷", 650, "可把英文能力轉成履歷與面試素材。"],
+    ["Lv. 21 商務文件", 730, "能處理較長文件、專案摘要與跨部門溝通內容。"],
+    ["Lv. 23 外商面試", 800, "適合銜接口說、寫作與情境演練。"],
+    ["Lv. 25 國際輸出", 860, "可往簡報、談判、跨國協作與 S&W 方向延伸。"],
   ];
   unlockGrid.innerHTML = unlocks
     .map(([title, threshold, body]) => {
       const unlocked = ability.score >= threshold;
-      return `<div class="unlock-card ${unlocked ? "" : "locked"}"><strong>${unlocked ? "已解鎖" : "待解鎖"}：${title}</strong><span>${body}</span></div>`;
+      return `<div class="unlock-card ${unlocked ? "" : "locked"}"><strong>${unlocked ? "CLEAR" : "LOCKED"}：${title}</strong><span>${body}</span></div>`;
+    })
+    .join("");
+  renderRoleLadder(ability);
+  renderBadges(ability);
+}
+
+function renderRoleLadder(ability) {
+  roleGrid.innerHTML = roleTiers
+    .slice()
+    .reverse()
+    .map((role) => {
+      const current = ability.score >= role.min && ability.score < role.next;
+      const unlocked = ability.score >= role.min;
+      const remaining = Math.max(role.min - ability.score, 0);
+      const status = current ? "目前角色" : unlocked ? "已解鎖" : `還差 ${remaining} 分`;
+      return `
+        <div class="role-card ${current ? "current" : ""} ${unlocked ? "unlocked" : ""}">
+          <div class="role-token-row">
+            <span class="role-token">${role.token}</span>
+            <span class="role-status">${status}</span>
+          </div>
+          <div>
+            <h3>${role.title}</h3>
+            <p>${role.min}+ 分 · ${role.band}</p>
+          </div>
+        </div>
+      `;
     })
     .join("");
 }
@@ -255,11 +344,35 @@ function renderTasks(ability) {
     ["推論理解", ability.inference],
   ].sort((a, b) => a[1] - b[1]);
   const tasks = [
-    [`7 天 ${weak[0][0]} 快修`, "每天 10 分鐘，先做短題與即時回饋，建立回訪習慣。"],
-    [`14 天 ${weak[1][0]} 任務`, "搭配錯題收藏與間隔複習，觀察正確率是否連續提升。"],
-    ["21 天模考衝刺", "完成一次完整模考，產出新版英語力報告並引導正式報名。"],
+    [`每日任務：7 天 ${weak[0][0]} 快修`, "每天 10 分鐘，先做短題與即時回饋，累積 XP 並建立回訪習慣。"],
+    [`副本挑戰：14 天 ${weak[1][0]} 任務`, "搭配錯題收藏與間隔複習，觀察正確率是否連續提升。"],
+    ["Boss 關卡：21 天模考衝刺", "完成一次完整模考，產出新版英語力報告並引導正式報名。"],
   ];
   taskGrid.innerHTML = tasks.map(([title, body]) => `<div class="task-card"><strong>${title}</strong><span>${body}</span></div>`).join("");
+}
+
+function renderBadges(ability) {
+  const badges = [
+    ["MAIL", "Email 解碼者", ability.score >= 350, "讀懂基礎職場信件。"],
+    ["MTG", "會議偵察兵", ability.score >= 550, "理解會議主題與任務分派。"],
+    ["CV", "履歷鍛造師", ability.score >= 650, "把英文能力轉成求職素材。"],
+    ["DOC", "文件耐力者", ability.reading >= 70, "能處理較長文件與專案摘要。"],
+    ["EAR", "聽力快反者", ability.listen >= 78, "能快速抓到對話重點。"],
+    ["S&W", "國際輸出者", ability.score >= 860, "可延伸到口說、寫作與跨國協作。"],
+  ];
+  badgeGrid.innerHTML = badges
+    .map(
+      ([token, title, unlocked, body]) => `
+        <div class="badge-card ${unlocked ? "unlocked" : ""}">
+          <span class="badge-token">${token}</span>
+          <div>
+            <strong>${unlocked ? "已獲得" : "未解鎖"}：${title}</strong>
+            <span>${body}</span>
+          </div>
+        </div>
+      `,
+    )
+    .join("");
 }
 
 function reportText(model, ability) {
@@ -290,6 +403,26 @@ function renderAll() {
   renderTasks(ability);
 }
 
+function applyUrlParams() {
+  const params = new URLSearchParams(window.location.search);
+  const controls = [
+    ["segment", segmentSelect],
+    ["source", sourceSelect],
+    ["window", examWindowSelect],
+    ["goal", goalSelect],
+  ];
+  controls.forEach(([key, control]) => {
+    const value = params.get(key);
+    if (value && [...control.options].some((option) => option.value === value)) {
+      control.value = value;
+    }
+  });
+  const score = Number(params.get("score"));
+  if (Number.isFinite(score)) {
+    scoreInput.value = clamp(score, Number(scoreInput.min), Number(scoreInput.max));
+  }
+}
+
 [segmentSelect, sourceSelect, examWindowSelect, scoreInput, goalSelect].forEach((control) => control.addEventListener("input", renderAll));
 printReport.addEventListener("click", () => window.print());
 copyReport.addEventListener("click", async () => {
@@ -304,4 +437,5 @@ copyReport.addEventListener("click", async () => {
   }, 1200);
 });
 
+applyUrlParams();
 renderAll();

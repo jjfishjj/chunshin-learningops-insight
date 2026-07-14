@@ -122,13 +122,31 @@
 
         <div class="ability-layout">
           <article class="ability-card main-card">
-            <p class="eyebrow">Ability Persona</p>
-            <h3 id="personaTitle">職場會議觀察者</h3>
-            <p id="personaDescription"></p>
-            <div class="score-band">
-              <span>目前分數</span>
-              <strong id="scoreDisplay">620</strong>
+            <div class="avatar-layout">
+              <div class="avatar-token" id="avatarToken">MTG</div>
+              <div>
+                <p class="eyebrow">Ability Character</p>
+                <h3 id="personaTitle">職場會議觀察者</h3>
+                <p id="personaDescription"></p>
+              </div>
+            </div>
+            <div class="score-band game-score-band">
+              <div>
+                <span>目前分數</span>
+                <strong id="scoreDisplay">620</strong>
+              </div>
+              <div>
+                <span>角色等級</span>
+                <strong id="levelDisplay">Lv. 18</strong>
+              </div>
               <span id="scoreBandLabel">CEFR B1-B2 區間</span>
+            </div>
+            <div class="xp-panel">
+              <div class="xp-head">
+                <strong id="xpLabel">XP 62 / 100</strong>
+                <span id="nextLevelText">距離下一階段還需要 110 分</span>
+              </div>
+              <div class="xp-track"><div class="xp-fill" id="xpFill"></div></div>
             </div>
           </article>
 
@@ -139,19 +157,41 @@
           </article>
         </div>
 
+        <section class="panel role-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Role Class Tree</p>
+              <h2>英語力角色進階路線</h2>
+            </div>
+            <span class="pill">Score-driven</span>
+          </div>
+          <div class="role-grid" id="roleGrid"></div>
+        </section>
+
         <div class="ability-layout">
           <article class="ability-card">
-            <p class="eyebrow">English DNA</p>
-            <h3>能力雷達條</h3>
+            <p class="eyebrow">Skill Status</p>
+            <h3>角色技能面板</h3>
             <div class="dna-bars" id="dnaBars"></div>
           </article>
 
           <article class="ability-card">
-            <p class="eyebrow">Workplace Unlock</p>
-            <h3>職場任務解鎖</h3>
+            <p class="eyebrow">Quest Map</p>
+            <h3>職場任務地圖</h3>
             <div class="unlock-grid" id="unlockGrid"></div>
           </article>
         </div>
+
+        <section class="panel badge-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow">Achievement Badges</p>
+              <h2>能力徽章與成就</h2>
+            </div>
+            <span class="pill">Shareable</span>
+          </div>
+          <div class="badge-grid" id="badgeGrid"></div>
+        </section>
 
         <section class="panel prescription-panel">
           <div class="panel-head">
